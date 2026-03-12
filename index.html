@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CrossBorder AI Guide</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background-color:#dbeeff;
+    margin:0;
+}
+
+header{
+    background:white;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+header img{
+    height:60px;
+}
+
+.container{
+    max-width:900px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+}
+
+textarea{
+    width:100%;
+    height:120px;
+    padding:10px;
+    font-size:16px;
+}
+
+button{
+    margin-top:15px;
+    padding:12px 20px;
+    font-size:16px;
+    background:#0066cc;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#004999;
+}
+
+.result{
+    margin-top:30px;
+    background:#f4f7fb;
+    padding:20px;
+    border-radius:8px;
+}
+
+.flow{
+    margin-top:20px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo.png" alt="CrossBorder AI Guide Logo">
+<h2>CrossBorder AI Guide</h2>
+</header>
+
+<div class="container">
+
+<h3>Describe your situation</h3>
+
+<textarea id="userInput"
+placeholder="Example: I got married in Germany and need to register the marriage in Romania."></textarea>
+
+<button onclick="analyze()">Analyze Procedure</button>
+
+<div id="result" class="result"></div>
+
+<div id="flow" class="flow"></div>
+
+</div>
+
+<script>
+
+async function analyze(){
+
+let text = document.getElementById("userInput").value;
+
+let response = await fetch("/api/analyze",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({input:text})
+});
+
+let data = await response.json();
+
+document.getElementById("result").innerHTML = `
+<b>Scenario:</b> ${data.scenario_type}<br><br>
+
+<b>Required documents:</b><br>
+${data.required_documents.join("<br>")}<br><br>
+
+<b>Institutions:</b><br>
+${data.institutions.join("<br>")}<br><br>
+
+<b>Next steps:</b><br>
+${data.next_steps.join("<br>")}
+`;
+
+document.getElementById("flow").innerHTML =
+data.process_flow.join(" → ");
+
+}
+
+</script>
+
+</body>
+</html>
