@@ -7,7 +7,7 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    background-color:#dbeeff;
+    background:#dbeeff;
     margin:0;
 }
 
@@ -80,7 +80,7 @@ button:hover{
 <textarea id="userInput"
 placeholder="Example: I got married in Germany and need to register the marriage in Romania."></textarea>
 
-<div id="output"></div>
+<button onclick="analyze()">Analyze Procedure</button>
 
 <div id="result" class="result"></div>
 
@@ -90,35 +90,40 @@ placeholder="Example: I got married in Germany and need to register the marriage
 
 <script>
 
-async function analyze(){
+function analyze(){
 
 let text = document.getElementById("userInput").value;
 
-let response = await fetch("/api/analyze",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({input:text})
-});
-
-let data = await response.json();
+if(!text){
+document.getElementById("result").innerHTML = "Please describe your situation.";
+return;
+}
 
 document.getElementById("result").innerHTML = `
-<b>Scenario:</b> ${data.scenario_type}<br><br>
+<b>Cross-Border Procedure Roadmap</b><br><br>
+
+<b>Scenario:</b> ${text}<br><br>
 
 <b>Required documents:</b><br>
-${data.required_documents.join("<br>")}<br><br>
+• Identity document<br>
+• Civil status certificates<br>
+• Proof of residence<br>
+• Certified translations if required<br><br>
 
 <b>Institutions:</b><br>
-${data.institutions.join("<br>")}<br><br>
+• Local administrative authority<br>
+• Civil registry office<br>
+• Foreign authority in origin country<br><br>
 
 <b>Next steps:</b><br>
-${data.next_steps.join("<br>")}
+1. Verify document requirements<br>
+2. Obtain certified translations if needed<br>
+3. Submit documents to relevant authority<br>
+4. Wait for confirmation of registration
 `;
 
 document.getElementById("flow").innerHTML =
-data.process_flow.join(" → ");
+"User scenario → AI interpretation → Procedure mapping → Roadmap generation";
 
 }
 
