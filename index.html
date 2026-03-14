@@ -1,133 +1,718 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>CrossBorder AI Guide</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrossBorder AI Guide</title>
+  <style>
+    :root {
+      --bg: #dff1ff;
+      --card: #ffffff;
+      --text: #12263a;
+      --muted: #5b7187;
+      --accent: #1769e0;
+      --accent-dark: #0d4fb0;
+      --border: #d6e4f2;
+      --success: #1f8a4c;
+      --warning: #b26b00;
+      --danger: #b42318;
+      --shadow: 0 10px 30px rgba(20, 40, 80, 0.08);
+      --radius: 18px;
+    }
 
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:#dbeeff;
-    margin:0;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-header{
-    background:white;
-    padding:20px;
-    text-align:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #dff1ff 0%, #edf8ff 100%);
+      color: var(--text);
+    }
 
-header img{
-    height:60px;
-}
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
 
-.container{
-    max-width:900px;
-    margin:40px auto;
-    background:white;
-    padding:30px;
-    border-radius:10px;
-}
+    .hero {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
 
-textarea{
-    width:100%;
-    height:120px;
-    padding:10px;
-    font-size:16px;
-}
+    .logo-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px #e6eef7;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
 
-button{
-    margin-top:15px;
-    padding:12px 20px;
-    font-size:16px;
-    background:#0066cc;
-    color:white;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-}
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-button:hover{
-    background:#004999;
-}
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 30px;
+      line-height: 1.1;
+    }
 
-.result{
-    margin-top:30px;
-    background:#f4f7fb;
-    padding:20px;
-    border-radius:8px;
-}
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
 
-.flow{
-    margin-top:20px;
-    font-weight:bold;
-}
-</style>
+    .layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 22px;
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .panel .sub {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      font: inherit;
+      color: var(--text);
+      outline: none;
+      background: #fbfdff;
+    }
+
+    textarea:focus,
+    .file-box:focus-within {
+      border-color: #8ab7ff;
+      box-shadow: 0 0 0 4px rgba(23, 105, 224, 0.10);
+    }
+
+    .examples {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .example-chip {
+      border: 1px solid var(--border);
+      background: #f7fbff;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .example-chip:hover {
+      background: #eef6ff;
+      border-color: #bdd7ff;
+    }
+
+    .file-box {
+      border: 1px dashed #9fbde2;
+      border-radius: 14px;
+      padding: 16px;
+      background: #f9fcff;
+      margin-top: 18px;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .file-hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      margin-top: 8px;
+    }
+
+    input[type="file"] {
+      font: inherit;
+      max-width: 100%;
+    }
+
+    .file-preview {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid var(--border);
+      display: none;
+    }
+
+    .file-preview.active {
+      display: block;
+    }
+
+    .file-preview img {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: 10px;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      background: #eff5fb;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .secondary-btn:hover {
+      background: #e8f1fb;
+    }
+
+    .status {
+      min-height: 22px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .status.loading { color: var(--accent); }
+    .status.success { color: var(--success); }
+    .status.error { color: var(--danger); }
+
+    .result-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fcfeff;
+    }
+
+    .result-card h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .result-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .result-card li {
+      margin-bottom: 8px;
+      line-height: 1.45;
+      color: #22384d;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .badge.low {
+      background: #e8f7ee;
+      color: #1f8a4c;
+    }
+
+    .badge.medium {
+      background: #fff3df;
+      color: #a76300;
+    }
+
+    .badge.high {
+      background: #fde8e7;
+      color: #b42318;
+    }
+
+    .flow-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .flow-step {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      min-width: 110px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(15, 45, 75, 0.04);
+    }
+
+    .flow-arrow {
+      font-size: 18px;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      background: #fbfdff;
+    }
+
+    .raw-json {
+      margin-top: 10px;
+      background: #0f1b2a;
+      color: #dbe8f5;
+      border-radius: 12px;
+      padding: 14px;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.55;
+      display: none;
+    }
+
+    .raw-json.active {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        align-items: flex-start;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="page">
+    <section class="hero">
+      <div class="logo-wrap">
+        <img src="logo.png" alt="CrossBorder AI Guide Logo" />
+      </div>
+      <div>
+        <h1>CrossBorder AI Guide</h1>
+        <p>
+          Turn complex cross-border procedures into clear action plans with required
+          documents, institutions, and visual process guidance.
+        </p>
+      </div>
+    </section>
 
-<header>
-<img src="logo.png" alt="CrossBorder AI Guide Logo">
-<h2>CrossBorder AI Guide</h2>
-</header>
+    <section class="layout">
+      <div class="panel">
+        <h2>Describe your situation</h2>
+        <p class="sub">
+          Enter a civil, administrative, or market-entry scenario. You can also upload a
+          supporting document to prepare multimodal analysis.
+        </p>
 
-<div class="container">
+        <label for="userInput">Case description</label>
+        <textarea
+          id="userInput"
+          placeholder="Example: I got married in Germany and need to register the marriage in Romania."
+        ></textarea>
 
-<h3>Describe your situation</h3>
+        <div class="examples">
+          <button class="example-chip" type="button" onclick="setExample(1)">
+            Marriage registration in Romania
+          </button>
+          <button class="example-chip" type="button" onclick="setExample(2)">
+            Indian company entering Germany
+          </button>
+        </div>
 
-<textarea id="userInput"
-placeholder="Example: I got married in Germany and need to register the marriage in Romania."></textarea>
+        <div class="file-box">
+          <label for="documentFile">Upload supporting document</label>
+          <div class="file-row">
+            <input id="documentFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" />
+            <button type="button" class="secondary-btn" onclick="clearFile()">Remove file</button>
+          </div>
+          <div class="file-hint">
+            Supported now: PDF or image upload in the interface. Actual AI document reading
+            will work after backend/API integration.
+          </div>
+          <div id="filePreview" class="file-preview"></div>
+        </div>
 
-<button onclick="analyze()">Analyze Procedure</button>
+        <div class="actions">
+          <button id="analyzeBtn" type="button" onclick="analyzeProcedure()">
+            Analyze Cross-Border Case
+          </button>
+          <button type="button" class="secondary-btn" onclick="toggleJson()">
+            Toggle raw JSON
+          </button>
+        </div>
 
-<div id="result" class="result"></div>
+        <div id="status" class="status"></div>
+      </div>
 
-<div id="flow" class="flow"></div>
+      <div class="panel">
+        <h2>Action plan</h2>
+        <p class="sub">
+          The agent will classify the scenario, list documents and institutions, and
+          generate a procedural flow.
+        </p>
 
-</div>
+        <div id="resultsArea" class="result-grid">
+          <div class="empty-state">
+            No analysis yet. Submit a case to generate a structured action plan and visual flow.
+          </div>
+        </div>
 
-<script>
+        <pre id="rawJson" class="raw-json"></pre>
+      </div>
+    </section>
+  </div>
 
-function analyze(){
+  <script>
+    const userInput = document.getElementById("userInput");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const statusBox = document.getElementById("status");
+    const resultsArea = document.getElementById("resultsArea");
+    const rawJsonBox = document.getElementById("rawJson");
+    const documentFile = document.getElementById("documentFile");
+    const filePreview = document.getElementById("filePreview");
 
-let text = document.getElementById("userInput").value;
+    let lastResponseData = null;
 
-if(!text){
-document.getElementById("result").innerHTML = "Please describe your situation.";
-return;
-}
+    function setExample(type) {
+      if (type === 1) {
+        userInput.value = "I got married in Germany and need to register the marriage in Romania.";
+      } else if (type === 2) {
+        userInput.value = "A company from India wants to sell aluminum kitchen products in Germany.";
+      }
+    }
 
-document.getElementById("result").innerHTML = `
-<b>Cross-Border Procedure Roadmap</b><br><br>
+    documentFile.addEventListener("change", handleFilePreview);
 
-<b>Scenario:</b> ${text}<br><br>
+    function handleFilePreview() {
+      const file = documentFile.files[0];
+      if (!file) {
+        filePreview.classList.remove("active");
+        filePreview.innerHTML = "";
+        return;
+      }
 
-<b>Required documents:</b><br>
-• Identity document<br>
-• Civil status certificates<br>
-• Proof of residence<br>
-• Certified translations if required<br><br>
+      const fileType = file.type || "Unknown type";
+      const fileSizeKB = Math.round(file.size / 1024);
 
-<b>Institutions:</b><br>
-• Local administrative authority<br>
-• Civil registry office<br>
-• Foreign authority in origin country<br><br>
+      filePreview.classList.add("active");
+      filePreview.innerHTML = `
+        <strong>Attached file:</strong> ${escapeHtml(file.name)}<br>
+        <strong>Type:</strong> ${escapeHtml(fileType)}<br>
+        <strong>Size:</strong> ${fileSizeKB} KB
+      `;
 
-<b>Next steps:</b><br>
-1. Verify document requirements<br>
-2. Obtain certified translations if needed<br>
-3. Submit documents to relevant authority<br>
-4. Wait for confirmation of registration
-`;
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          filePreview.innerHTML += `<img src="${e.target.result}" alt="Document preview">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
-document.getElementById("flow").innerHTML =
-"User scenario → AI interpretation → Procedure mapping → Roadmap generation";
+    function clearFile() {
+      documentFile.value = "";
+      filePreview.classList.remove("active");
+      filePreview.innerHTML = "";
+    }
 
-}
+    function setStatus(message, type = "") {
+      statusBox.textContent = message;
+      statusBox.className = `status ${type}`.trim();
+    }
 
-</script>
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
+    function renderResults(data) {
+      const complexity = (data.complexity_level || "").toLowerCase();
+      const badgeClass =
+        complexity === "low" ? "low" :
+        complexity === "medium" ? "medium" :
+        "high";
+
+      resultsArea.innerHTML = `
+        <div class="result-card">
+          <h3>Scenario Type</h3>
+          <div>${escapeHtml(data.scenario_type || "Not available")}</div>
+        </div>
+
+        <div class="result-card">
+          <h3>Complexity Level</h3>
+          <span class="badge ${badgeClass}">
+            ${escapeHtml(data.complexity_level || "Unknown")}
+          </span>
+        </div>
+
+        <div class="result-card">
+          <h3>Required Documents</h3>
+          ${renderList(data.required_documents)}
+        </div>
+
+        <div class="result-card">
+          <h3>Relevant Institutions</h3>
+          ${renderList(data.institutions)}
+        </div>
+
+        <div class="result-card">
+          <h3>Next Steps</h3>
+          ${renderList(data.next_steps)}
+        </div>
+
+        <div class="result-card">
+          <h3>Process Flow</h3>
+          ${renderFlow(data.process_flow)}
+        </div>
+      `;
+
+      rawJsonBox.textContent = JSON.stringify(data, null, 2);
+      lastResponseData = data;
+    }
+
+    function renderList(items) {
+      if (!Array.isArray(items) || items.length === 0) {
+        return `<div class="empty-state">No items returned.</div>`;
+      }
+
+      return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    }
+
+    function renderFlow(flowItems) {
+      if (!Array.isArray(flowItems) || flowItems.length === 0) {
+        return `<div class="empty-state">No process flow returned.</div>`;
+      }
+
+      return `
+        <div class="flow-wrap">
+          ${flowItems.map((item, index) => `
+            <div class="flow-step">${escapeHtml(item)}</div>
+            ${index < flowItems.length - 1 ? `<div class="flow-arrow">→</div>` : ""}
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function toggleJson() {
+      rawJsonBox.classList.toggle("active");
+    }
+
+    async function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function analyzeProcedure() {
+      const text = userInput.value.trim();
+      const file = documentFile.files[0];
+
+      if (!text) {
+        setStatus("Please describe the case before analyzing.", "error");
+        return;
+      }
+
+      analyzeBtn.disabled = true;
+      setStatus("Analyzing scenario...", "loading");
+
+      try {
+        // FRONTEND DEMO PAYLOAD
+        // Replace this part later with your real backend/API call.
+
+        let filePayload = null;
+
+        if (file) {
+          filePayload = {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            contentBase64: await fileToBase64(file) // ready for backend later
+          };
+        }
+
+        // DEMO RESPONSE FOR UI TESTING
+        // Replace this entire section with fetch("/analyze", {...}) later.
+        const demoResponse = await getDemoAgentResponse(text, filePayload);
+
+        renderResults(demoResponse);
+        setStatus("Action plan generated.", "success");
+      } catch (error) {
+        console.error(error);
+        setStatus("Something went wrong. Please try again.", "error");
+      } finally {
+        analyzeBtn.disabled = false;
+      }
+    }
+
+    async function getDemoAgentResponse(text, filePayload) {
+      // Fake delay to simulate agent behavior
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
+      const lower = text.toLowerCase();
+
+      if (lower.includes("married") || lower.includes("marriage")) {
+        return {
+          scenario_type: filePayload
+            ? "Administrative procedure: Marriage transcription with supporting document"
+            : "Administrative procedure: Marriage transcription",
+          required_documents: [
+            "International marriage certificate or equivalent accepted version",
+            "Romanian birth certificate",
+            "Valid IDs or passports for both spouses",
+            "Any required translated supporting civil-status document"
+          ],
+          institutions: [
+            "Standesamt in Germany",
+            "Romanian Consulate or local Romanian civil registry office",
+            "econsulat.ro / Ministry of Foreign Affairs"
+          ],
+          complexity_level: "Medium",
+          next_steps: [
+            "Confirm which marriage certificate format is accepted by the Romanian institution",
+            "Prepare civil-status and identity documents",
+            "Upload or present documents for pre-validation",
+            "Schedule appointment and submit originals"
+          ],
+          process_flow: [
+            "German Civil Registry",
+            "Marriage Certificate",
+            "Romanian Consulate",
+            "Civil Registry Romania"
+          ]
+        };
+      }
+
+      return {
+        scenario_type: filePayload
+          ? "Business market-entry scenario with attached product document"
+          : "Business market-entry scenario",
+        required_documents: [
+          "Product material composition details",
+          "Importer or authorized representative information",
+          "Compliance declarations",
+          "Testing or safety documentation"
+        ],
+        institutions: [
+          "EU importer or authorized representative",
+          "Customs authority",
+          "Relevant product compliance authority"
+        ],
+        complexity_level: "High",
+        next_steps: [
+          "Define the exact target market and importer setup",
+          "Check product-specific compliance requirements",
+          "Prepare required technical and import documents",
+          "Validate labeling and market-entry obligations"
+        ],
+        process_flow: [
+          "Product Data",
+          "Compliance Review",
+          "Importer Setup",
+          "Customs Check",
+          "Market Entry"
+        ]
+      };
+    }
+  </script>
 </body>
 </html>
