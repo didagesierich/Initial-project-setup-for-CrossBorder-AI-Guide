@@ -4,9 +4,7 @@ const MAX_TURNS = 6;
 
 const $ = (id) => document.getElementById(id);
 
-const productInputEl = $("productInput");
-const originInputEl = $("originInput");
-const targetInputEl = $("targetInput");
+const caseInputEl = $("caseInput");
 const submitBtnEl = $("submitBtn");
 const resetBtnEl = $("resetBtn");
 const statusBarEl = $("statusBar");
@@ -66,9 +64,7 @@ function setStatus(msg, type, spinning) {
 function setBusy(busy) {
   isBusy = busy;
   if (submitBtnEl) submitBtnEl.disabled = busy;
-  if (productInputEl) productInputEl.disabled = busy;
-  if (originInputEl) originInputEl.disabled = busy;
-  if (targetInputEl) targetInputEl.disabled = busy;
+  if (caseInputEl) caseInputEl.disabled = busy;
   document.body.style.cursor = busy ? "progress" : "";
 }
 
@@ -129,19 +125,14 @@ function buildGenerationPrompt() {
     'Return ONLY valid JSON in this format: {"scenario_type":"","complexity_level":"Low|Medium|High","regulatory_risks":[],"next_steps":[],"summary":""}'
   );
 }
-
 function getInputs() {
   return {
-    product: (productInputEl?.value || "").trim(),
-    origin: (originInputEl?.value || "").trim(),
-    target: (targetInputEl?.value || "").trim()
+    case_description: (caseInputEl?.value || "").trim()
   };
 }
 
 function validateInputs(inputs) {
-  if (!inputs.product) return "Please describe the product.";
-  if (!inputs.origin) return "Please enter the country of origin.";
-  if (!inputs.target) return "Please enter the target market.";
+  if (!inputs.case_description) return "Please describe the case.";
   return null;
 }
 
@@ -173,14 +164,12 @@ async function runStep1() {
   setAgentState("reviewing");
   setStatus("Reviewing your inputs…", "loading", true);
 
-  const logId = logEntry("🔍", "Reviewing inputs", inputs.product + " · " + inputs.origin + " → " + inputs.target);
+  const logId = logEntry("🔍", "Reviewing inputs", inputs.case_description);
 
-  const userPrompt =
-    "[IMPORTANT: Respond in English only.]\n\n" +
-    "Product: " + inputs.product + "\n" +
-    "Country of origin: " + inputs.origin + "\n" +
-    "Target market: " + inputs.target + "\n\n" +
-    "Assess market entry risks and regulatory requirements. Respond in English only.";
+const userPrompt =
+  "[IMPORTANT: Respond in English only.]\n\n" +
+  "Case description: " + inputs.case_description + "\n\n" +
+  "Assess market entry risks and regulatory requirements. Respond in English only.";
 
   conversationHistory = [{ role: "user", parts: [{ text: userPrompt }] }];
 
@@ -337,9 +326,7 @@ function showClarificationUI(questions) {
 
   if (submitBtnEl) submitBtnEl.textContent = "▶ Submit Answers";
 
-  if (productInputEl) productInputEl.disabled = true;
-  if (originInputEl) originInputEl.disabled = true;
-  if (targetInputEl) targetInputEl.disabled = true;
+  if (caseInputEl) caseInputEl.disabled = true;
 
   if (resetBtnEl) resetBtnEl.style.display = "";
   if (resultsAreaEl) resultsAreaEl.innerHTML = buildClarifyState();
@@ -453,18 +440,10 @@ function resetAll() {
   conversationHistory = [];
   isBusy = false;
 
-  if (productInputEl) {
-    productInputEl.value = "";
-    productInputEl.disabled = false;
-  }
-  if (originInputEl) {
-    originInputEl.value = "";
-    originInputEl.disabled = false;
-  }
-  if (targetInputEl) {
-    targetInputEl.value = "";
-    targetInputEl.disabled = false;
-  }
+ if (caseInputEl) {
+  caseInputEl.value = "";
+  caseInputEl.disabled = false;
+}
 
   if (clarifyAnswerEl) clarifyAnswerEl.value = "";
   if (clarifyListEl) clarifyListEl.innerHTML = "";
@@ -492,7 +471,7 @@ function resetAll() {
   hideAgentState();
   setStatus("", "");
   document.body.style.cursor = "";
-  if (productInputEl) productInputEl.focus();
+  if (caseInputEl) caseInputEl.focus();
 }
 
 function escHtml(str) {
