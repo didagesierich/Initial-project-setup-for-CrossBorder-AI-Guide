@@ -1,1 +1,1 @@
-const GEMINI_API_KEY = "";
+const GEMINI_API_KEY = "NETLIFY_FUNCTION";
