@@ -264,7 +264,9 @@ async function runAgentLoop(systemInstruction, phase) {
           retriedOnce = true;
           conversationHistory.push({
             role: "user",
-            parts: [{ text: "Make sure you include all required fields: regulatory_risks, complexity_level, next_steps, and summary. All text must be in English." }]
+            parts: [{
+              text: "Make sure you include all required fields: regulatory_risks, complexity_level, next_steps, and summary. All text must be in English."
+            }]
           });
           setStatus("Refining report…", "loading", true);
           continue;
@@ -356,20 +358,20 @@ function renderReport(data) {
 
   resultsAreaEl.innerHTML =
     '<div class="result-summary">' +
-      '<div>' +
-        '<div class="result-summary-title">' + escHtml(scenario) + '</div>' +
-        (summary ? '<div class="result-summary-sub">' + escHtml(summary) + '</div>' : "") +
-      '</div>' +
-      '<span class="badge ' + escHtml(badgeClass) + '">' + escHtml(data.complexity_level || "Unknown") + '</span>' +
-    '</div>' +
+      "<div>" +
+        '<div class="result-summary-title">' + escHtml(scenario) + "</div>" +
+        (summary ? '<div class="result-summary-sub">' + escHtml(summary) + "</div>" : "") +
+      "</div>" +
+      '<span class="badge ' + escHtml(badgeClass) + '">' + escHtml(data.complexity_level || "Unknown") + "</span>" +
+    "</div>" +
     '<div class="result-card">' +
-      '<h3>Regulatory risks</h3>' +
+      "<h3>Regulatory risks</h3>" +
       renderList(data.regulatory_risks) +
-    '</div>' +
+    "</div>" +
     '<div class="result-card">' +
-      '<h3>Next steps</h3>' +
+      "<h3>Next steps</h3>" +
       renderList(data.next_steps) +
-    '</div>';
+    "</div>";
 }
 
 function renderList(items) {
@@ -388,7 +390,7 @@ function buildClarifyState() {
 }
 
 function buildErrorState(msg) {
-  return '<div class="empty-state" style="color:var(--danger)">' + escHtml(msg) + '</div>';
+  return '<div class="empty-state" style="color:var(--danger)">' + escHtml(msg) + "</div>";
 }
 
 function parseJsonSafely(raw) {
@@ -404,15 +406,22 @@ function parseJsonSafely(raw) {
     };
   }
 
-  try { return JSON.parse(t); } catch (_) {}
+  try {
+    return JSON.parse(t);
+  } catch (_) {}
 
   const stripped = t.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-  try { return JSON.parse(stripped); } catch (_) {}
+
+  try {
+    return JSON.parse(stripped);
+  } catch (_) {}
 
   const first = stripped.indexOf("{");
   const last = stripped.lastIndexOf("}");
   if (first !== -1 && last > first) {
-    try { return JSON.parse(stripped.slice(first, last + 1)); } catch (_) {}
+    try {
+      return JSON.parse(stripped.slice(first, last + 1));
+    } catch (_) {}
   }
 
   console.warn("parseJsonSafely: could not parse response:", raw);
@@ -444,9 +453,18 @@ function resetAll() {
   conversationHistory = [];
   isBusy = false;
 
-  if (productInputEl) { productInputEl.value = ""; productInputEl.disabled = false; }
-  if (originInputEl) { originInputEl.value = ""; originInputEl.disabled = false; }
-  if (targetInputEl) { targetInputEl.value = ""; targetInputEl.disabled = false; }
+  if (productInputEl) {
+    productInputEl.value = "";
+    productInputEl.disabled = false;
+  }
+  if (originInputEl) {
+    originInputEl.value = "";
+    originInputEl.disabled = false;
+  }
+  if (targetInputEl) {
+    targetInputEl.value = "";
+    targetInputEl.disabled = false;
+  }
 
   if (clarifyAnswerEl) clarifyAnswerEl.value = "";
   if (clarifyListEl) clarifyListEl.innerHTML = "";
@@ -507,31 +525,26 @@ document.addEventListener("DOMContentLoaded", () => {
   if (rawToggleBtn) rawToggleBtn.addEventListener("click", toggleRawJson);
 
   if (resetBtnEl) resetBtnEl.style.display = "none";
-}); am gasit asta... daca vezi este dublat, si asta in ciuda faptului ca in github nu se vede asa totul... abia cand am dat paste in notepad sa ti arat. mai aveam putin si imi venea sa plang... poti sa imi dai script js complet ca sa inlocuiesc tot? nu mai am nervi sa caut cerul prin hartii.  codul o sa ti l mai trimit in alta parte plus cealalata parte. ca sa ai totul complet iata si partea de index html de jos....   </section>
-    </div>
-  </main>
 
-  <script src="config.js"></script>
-  <script src="script.js"></script>
+  const fileInput = $("docUpload");
+  const fileMeta = $("fileMeta");
+  const removeBtn = $("removeDocBtn");
 
-  <script>
-    const fileInput = document.getElementById("docUpload");
-    const fileMeta = document.getElementById("fileMeta");
-    const removeBtn = document.getElementById("removeDocBtn");
-
+  if (fileInput && fileMeta) {
     fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
+      const file = fileInput.files?.[0];
       if (!file) {
         fileMeta.textContent = "No file selected";
         return;
       }
       fileMeta.textContent = `${file.name} • ${Math.round(file.size / 1024)} KB • ${file.type || "unknown type"}`;
     });
+  }
 
+  if (removeBtn && fileInput && fileMeta) {
     removeBtn.addEventListener("click", () => {
       fileInput.value = "";
       fileMeta.textContent = "No file selected";
     });
-  </script>
-</body>
-</html>
+  }
+});
