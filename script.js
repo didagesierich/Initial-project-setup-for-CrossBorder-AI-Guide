@@ -425,9 +425,7 @@ async function runAgentLoop(systemInstruction, phase) {
 ════════════════════════════════ */
 
 async function callGemini(contents, systemInstruction) {
-  const url = GEMINI_API_BASE + GEMINI_MODEL + ":generateContent?key=" + GEMINI_API_KEY;
-
-  const res = await fetch(url, {
+  const res = await fetch("/.netlify/functions/gemini", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -436,6 +434,24 @@ async function callGemini(contents, systemInstruction) {
       generationConfig: {
         temperature: 0,
         maxOutputTokens: 2000
+      }
+    })
+  });
+
+  let data = {};
+  try {
+    data = await res.json();
+  } catch (_) {
+    throw new Error("Gemini API returned a non-JSON response.");
+  }
+
+  if (!res.ok) {
+    const msg = data?.error?.message || data?.error || "Gemini API error";
+    throw new Error(msg);
+  }
+
+  return data;
+}
       }
     })
   });
