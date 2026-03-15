@@ -1,125 +1,56 @@
-/*
- * script.js — Market Entry Risk Report Agent
- * Runs in the browser alongside index.html
- * Requires: const GEMINI_API_KEY defined in config.js (loaded before this script)
- *
- * AGENT FLOW:
- *   Step 1 — Review inputs → ask 2–3 clarifying questions if needed
- *   Step 2 — Generate final Market Entry Risk Report
- *
- * Expected HTML elements:
- *   #productInput       — textarea/input: product description
- *   #originInput        — input: country of origin
- *   #targetInput        — input: target market
- *   #submitBtn          — main action button
- *   #resetBtn           — start over button
- *   #statusBar          — status message area
- *   #agentStateBar      — visible agent phase indicator
- *   #agentStateLabel    — text inside state bar
- *   #agentStateIcon     — emoji/icon inside state bar
- *   #agentStateStep     — step label (e.g. "Step 1 of 2")
- *   #clarifyBlock       — hidden div shown when clarification needed
- *   #clarifyList        — <ol> inside clarifyBlock
- *   #clarifyAnswerInput — textarea for user answers
- *   #resultsArea        — where the final report is rendered
- *   #rawJsonBox         — <pre> for raw JSON toggle
- *   #thinkingLog        — agent activity log container
- *   #toolCallsLog       — inner div for individual log entries
- */
-
 "use strict";
 
-/* ════════════════════════════════
-   CONSTANTS
-════════════════════════════════ */
-
-const GEMINI_MODEL    = "gemini-2.5-flash";
-const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
-const MAX_TURNS       = 6;
-
-/* ════════════════════════════════
-   DOM REFERENCES
-   Gracefully falls back to null if element not found.
-════════════════════════════════ */
+const MAX_TURNS = 6;
 
 const $ = (id) => document.getElementById(id);
 
-const productInputEl      = $("productInput");
-const originInputEl       = $("originInput");
-const targetInputEl       = $("targetInput");
-const submitBtnEl         = $("submitBtn");
-const resetBtnEl          = $("resetBtn");
-const statusBarEl         = $("statusBar");
-const agentStateBarEl     = $("agentStateBar");
-const agentStateLabelEl   = $("agentStateLabel");
-const agentStateIconEl    = $("agentStateIcon");
-const agentStateStepEl    = $("agentStateStep");
-const clarifyBlockEl      = $("clarifyBlock");
-const clarifyListEl       = $("clarifyList");
-const clarifyAnswerEl     = $("clarifyAnswerInput");
-const resultsAreaEl       = $("resultsArea");
-const rawJsonBoxEl        = $("rawJsonBox");
-const thinkingLogEl       = $("thinkingLog");
-const toolCallsLogEl      = $("toolCallsLog");
+const productInputEl = $("productInput");
+const originInputEl = $("originInput");
+const targetInputEl = $("targetInput");
+const submitBtnEl = $("submitBtn");
+const resetBtnEl = $("resetBtn");
+const statusBarEl = $("statusBar");
+const agentStateBarEl = $("agentStateBar");
+const agentStateLabelEl = $("agentStateLabel");
+const agentStateIconEl = $("agentStateIcon");
+const agentStateStepEl = $("agentStateStep");
+const clarifyBlockEl = $("clarifyBlock");
+const clarifyListEl = $("clarifyList");
+const clarifyAnswerEl = $("clarifyAnswerInput");
+const resultsAreaEl = $("resultsArea");
+const rawJsonBoxEl = $("rawJsonBox");
+const thinkingLogEl = $("thinkingLog");
+const toolCallsLogEl = $("toolCallsLog");
 
-/* ════════════════════════════════
-   APP STATE
-════════════════════════════════ */
-
-let isBusy              = false;
-let agentStep           = 1;          // 1 = initial, 2 = awaiting clarification answers
-let savedInputs         = {};         // { product, origin, target }
+let isBusy = false;
+let agentStep = 1;
+let savedInputs = {};
 let conversationHistory = [];
-
-/* ════════════════════════════════
-   API KEY GUARD
-════════════════════════════════ */
-
-function checkApiKey() {
-  const missing =
-    typeof GEMINI_API_KEY === "undefined" ||
-    !GEMINI_API_KEY ||
-    GEMINI_API_KEY === "PASTE_YOUR_REAL_KEY_HERE";
-
-  if (missing) {
-    setStatus(
-      "❌ Missing Gemini API key. Open config.js and paste your real key.",
-      "error"
-    );
-    if (submitBtnEl) submitBtnEl.disabled = true;
-  }
-  return !missing;
-}
-
-/* ════════════════════════════════
-   AGENT STATE BAR
-   Shows the current phase visibly.
-════════════════════════════════ */
+let logCounter = 0;
 
 const AGENT_STATES = {
-  reviewing:    { icon: "🔍", label: "Reviewing inputs",             step: "Step 1 of 2" },
-  clarifying:   { icon: "💬", label: "Asking clarifying questions",  step: "Step 1 of 2" },
-  generating:   { icon: "⚙️",  label: "Generating risk report",       step: "Step 2 of 2" },
-  synthesizing: { icon: "🧩", label: "Synthesizing final report",    step: "Step 2 of 2" },
-  done:         { icon: "✅", label: "Report ready",                  step: "Complete"    },
+  reviewing: { icon: "🔍", label: "Reviewing inputs", step: "Step 1 of 2" },
+  clarifying: { icon: "💬", label: "Asking clarifying questions", step: "Step 1 of 2" },
+  generating: { icon: "⚙️", label: "Generating risk report", step: "Step 2 of 2" },
+  done: { icon: "✅", label: "Report ready", step: "Complete" }
 };
+
+function checkApiKey() {
+  return true;
+}
 
 function setAgentState(name) {
   const s = AGENT_STATES[name];
   if (!s || !agentStateBarEl) return;
   agentStateBarEl.classList.add("visible");
   if (agentStateLabelEl) agentStateLabelEl.textContent = s.label;
-  if (agentStateIconEl)  agentStateIconEl.textContent  = s.icon;
-  if (agentStateStepEl)  agentStateStepEl.textContent  = s.step;
+  if (agentStateIconEl) agentStateIconEl.textContent = s.icon;
+  if (agentStateStepEl) agentStateStepEl.textContent = s.step;
 }
 
 function hideAgentState() {
   if (agentStateBarEl) agentStateBarEl.classList.remove("visible");
 }
-
-/* ════════════════════════════════
-   STATUS BAR
-════════════════════════════════ */
 
 function setStatus(msg, type, spinning) {
   if (!statusBarEl) return;
@@ -132,25 +63,14 @@ function setStatus(msg, type, spinning) {
   }
 }
 
-/* ════════════════════════════════
-   BUSY STATE
-════════════════════════════════ */
-
 function setBusy(busy) {
   isBusy = busy;
   if (submitBtnEl) submitBtnEl.disabled = busy;
   if (productInputEl) productInputEl.disabled = busy;
-  if (originInputEl)  originInputEl.disabled  = busy;
-  if (targetInputEl)  targetInputEl.disabled  = busy;
+  if (originInputEl) originInputEl.disabled = busy;
+  if (targetInputEl) targetInputEl.disabled = busy;
   document.body.style.cursor = busy ? "progress" : "";
 }
-
-/* ════════════════════════════════
-   AGENT ACTIVITY LOG
-   Logs each meaningful step the agent takes.
-════════════════════════════════ */
-
-let logCounter = 0;
 
 function logEntry(icon, label, detail, status) {
   if (!toolCallsLogEl) return null;
@@ -161,8 +81,8 @@ function logEntry(icon, label, detail, status) {
   el.innerHTML =
     '<span class="tool-icon">' + icon + "</span>" +
     "<div>" +
-      '<div class="tool-name">' + escHtml(label) + "</div>" +
-      (detail ? '<div class="tool-args">' + escHtml(detail) + "</div>" : "") +
+    '<div class="tool-name">' + escHtml(label) + "</div>" +
+    (detail ? '<div class="tool-args">' + escHtml(detail) + "</div>" : "") +
     "</div>";
   toolCallsLogEl.appendChild(el);
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -187,10 +107,6 @@ function updateLogEntry(id, status, resultText) {
   }
 }
 
-/* ════════════════════════════════
-   SYSTEM PROMPTS
-════════════════════════════════ */
-
 function buildReviewPrompt() {
   return (
     "ABSOLUTE RULE — OUTPUT LANGUAGE: Every word of your output MUST be in English. " +
@@ -198,15 +114,10 @@ function buildReviewPrompt() {
     "\n\nYou are a Market Entry Risk Assessment Agent. " +
     "Your job is to analyze a product's regulatory and market entry risks when entering a target market from a country of origin. " +
     "\n\nPHASE: Review. Decide if you have enough information to generate the risk report." +
-    "\n\nIF critical information is missing (product type unclear, countries missing, regulatory context ambiguous): " +
-    "Return ONLY this JSON, nothing else, no markdown: " +
-    '{"clarification_needed":true,"questions":["Q1 in English?","Q2 in English?","Q3 in English?"]} ' +
-    "Maximum 3 questions. Only ask what is truly necessary." +
+    "\n\nIF critical information is missing: " +
+    'Return ONLY this JSON: {"clarification_needed":true,"questions":["Q1 in English?","Q2 in English?","Q3 in English?"]} ' +
     "\n\nIF you have enough information: " +
-    "Generate the final risk report directly. " +
-    "All values must be in English. No URLs. No markdown. No backticks. Return ONLY valid JSON." +
-    "\n\nFINAL REPORT FORMAT: " +
-    '{"scenario_type":"","complexity_level":"Low|Medium|High","regulatory_risks":[],"next_steps":[],"summary":""}'
+    'Return ONLY valid JSON in this format: {"scenario_type":"","complexity_level":"Low|Medium|High","regulatory_risks":[],"next_steps":[],"summary":""}'
   );
 }
 
@@ -214,40 +125,25 @@ function buildGenerationPrompt() {
   return (
     "ABSOLUTE RULE — OUTPUT LANGUAGE: Every word of your output MUST be in English. " +
     "Do not use any other language regardless of the user's input language. " +
-    "\n\nYou are a Market Entry Risk Assessment Agent. You now have all the information needed. " +
-    "Generate a comprehensive Market Entry Risk Report based on the provided inputs and answers. " +
-    "\n\nThe report must cover:" +
-    "\n- Specific regulatory risks (e.g. CE marking, import duties, labeling requirements, product standards, data protection)" +
-    "\n- Complexity level (Low / Medium / High) with a brief justification" +
-    "\n- Concrete next steps the company should take" +
-    "\n- A short plain-English summary" +
-    "\n\nAll values must be in English. No URLs. No markdown. No backticks. Return ONLY valid JSON." +
-    '\n\nFormat: {"scenario_type":"","complexity_level":"Low|Medium|High","regulatory_risks":[],"next_steps":[],"summary":""}'
+    "\n\nYou are a Market Entry Risk Assessment Agent. " +
+    'Return ONLY valid JSON in this format: {"scenario_type":"","complexity_level":"Low|Medium|High","regulatory_risks":[],"next_steps":[],"summary":""}'
   );
 }
-
-/* ════════════════════════════════
-   INPUT VALIDATION
-════════════════════════════════ */
 
 function getInputs() {
   return {
     product: (productInputEl?.value || "").trim(),
-    origin:  (originInputEl?.value  || "").trim(),
-    target:  (targetInputEl?.value  || "").trim(),
+    origin: (originInputEl?.value || "").trim(),
+    target: (targetInputEl?.value || "").trim()
   };
 }
 
 function validateInputs(inputs) {
   if (!inputs.product) return "Please describe the product.";
-  if (!inputs.origin)  return "Please enter the country of origin.";
-  if (!inputs.target)  return "Please enter the target market.";
+  if (!inputs.origin) return "Please enter the country of origin.";
+  if (!inputs.target) return "Please enter the target market.";
   return null;
 }
-
-/* ════════════════════════════════
-   SUBMIT ROUTER
-════════════════════════════════ */
 
 function handleSubmit() {
   if (isBusy) return;
@@ -255,10 +151,6 @@ function handleSubmit() {
   if (agentStep === 1) runStep1();
   else if (agentStep === 2) runStep2();
 }
-
-/* ════════════════════════════════
-   STEP 1 — Review inputs
-════════════════════════════════ */
 
 async function runStep1() {
   const inputs = getInputs();
@@ -272,8 +164,11 @@ async function runStep1() {
   setBusy(true);
 
   if (toolCallsLogEl) toolCallsLogEl.innerHTML = "";
-  if (rawJsonBoxEl)   { rawJsonBoxEl.textContent = ""; rawJsonBoxEl.classList.remove("active"); }
-  if (resultsAreaEl)  resultsAreaEl.innerHTML = buildWorkingState();
+  if (rawJsonBoxEl) {
+    rawJsonBoxEl.textContent = "";
+    rawJsonBoxEl.classList.remove("active");
+  }
+  if (resultsAreaEl) resultsAreaEl.innerHTML = buildWorkingState();
 
   setAgentState("reviewing");
   setStatus("Reviewing your inputs…", "loading", true);
@@ -299,10 +194,6 @@ async function runStep1() {
     setBusy(false);
   }
 }
-
-/* ════════════════════════════════
-   STEP 2 — Submit clarification answers
-════════════════════════════════ */
 
 async function runStep2() {
   const answers = (clarifyAnswerEl?.value || "").trim();
@@ -339,25 +230,19 @@ async function runStep2() {
   }
 }
 
-/* ════════════════════════════════
-   CORE AGENT LOOP
-   Sends to Gemini, checks for clarification JSON or final report JSON,
-   retries once if model skips tool phase in step2.
-════════════════════════════════ */
-
 async function runAgentLoop(systemInstruction, phase) {
-  let turns            = 0;
-  let retriedOnce      = false;
+  let turns = 0;
+  let retriedOnce = false;
 
   while (turns < MAX_TURNS) {
     turns++;
 
-    const response  = await callGemini(conversationHistory, systemInstruction);
+    const response = await callGemini(conversationHistory, systemInstruction);
     const candidate = response?.candidates?.[0];
 
     if (!candidate) throw new Error("Gemini returned no candidate. Check your API key and quota.");
 
-    const parts     = candidate.content?.parts || [];
+    const parts = candidate.content?.parts || [];
     const textParts = parts.filter(p => p.text);
 
     conversationHistory.push({ role: "model", parts });
@@ -368,20 +253,13 @@ async function runAgentLoop(systemInstruction, phase) {
 
       const parsed = parseJsonSafely(rawText);
 
-      /* Case A: clarification questions */
-      if (
-        parsed.clarification_needed === true &&
-        Array.isArray(parsed.questions) &&
-        parsed.questions.length > 0
-      ) {
+      if (parsed.clarification_needed === true && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
         setAgentState("clarifying");
         showClarificationUI(parsed.questions);
         return;
       }
 
-      /* Case B: final report */
       if (parsed.scenario_type !== undefined || parsed.regulatory_risks !== undefined) {
-        /* Retry once if we're in step2 and model answered without being asked */
         if (phase === "step2" && !retriedOnce && turns === 1) {
           retriedOnce = true;
           conversationHistory.push({
@@ -399,7 +277,6 @@ async function runAgentLoop(systemInstruction, phase) {
         return;
       }
 
-      /* Case C: unexpected */
       if (rawJsonBoxEl) rawJsonBoxEl.classList.add("active");
       setStatus("Unexpected response format. See raw JSON.", "error");
       if (resultsAreaEl) resultsAreaEl.innerHTML = buildErrorState("Unexpected response. See raw JSON.");
@@ -407,7 +284,6 @@ async function runAgentLoop(systemInstruction, phase) {
       return;
     }
 
-    /* Empty stop */
     if (candidate.finishReason === "STOP") {
       throw new Error("Agent stopped without producing output. Try rephrasing your inputs.");
     }
@@ -419,10 +295,6 @@ async function runAgentLoop(systemInstruction, phase) {
     if (resetBtnEl) resetBtnEl.style.display = "";
   }
 }
-
-/* ════════════════════════════════
-   GEMINI API CALL
-════════════════════════════════ */
 
 async function callGemini(contents, systemInstruction) {
   const res = await fetch("/.netlify/functions/gemini", {
@@ -452,29 +324,6 @@ async function callGemini(contents, systemInstruction) {
 
   return data;
 }
-      }
-    })
-  });
-
-  let data = {};
-  try {
-    data = await res.json();
-  } catch (_) {
-    throw new Error("Gemini API returned a non-JSON response.");
-  }
-
-  if (!res.ok) {
-    const msg  = data?.error?.message || "Gemini API error";
-    const code = data?.error?.code    ? " (" + data.error.code + ")" : "";
-    throw new Error(msg + code);
-  }
-
-  return data;
-}
-
-/* ════════════════════════════════
-   CLARIFICATION UI
-════════════════════════════════ */
 
 function showClarificationUI(questions) {
   agentStep = 2;
@@ -487,8 +336,8 @@ function showClarificationUI(questions) {
   if (submitBtnEl) submitBtnEl.textContent = "▶ Submit Answers";
 
   if (productInputEl) productInputEl.disabled = true;
-  if (originInputEl)  originInputEl.disabled  = true;
-  if (targetInputEl)  targetInputEl.disabled  = true;
+  if (originInputEl) originInputEl.disabled = true;
+  if (targetInputEl) targetInputEl.disabled = true;
 
   if (resetBtnEl) resetBtnEl.style.display = "";
   if (resultsAreaEl) resultsAreaEl.innerHTML = buildClarifyState();
@@ -497,38 +346,26 @@ function showClarificationUI(questions) {
   if (clarifyAnswerEl) clarifyAnswerEl.focus();
 }
 
-/* ════════════════════════════════
-   REPORT RENDERING
-════════════════════════════════ */
-
 function renderReport(data) {
   if (!resultsAreaEl) return;
 
   const complexity = String(data.complexity_level || "").toLowerCase();
   const badgeClass = complexity === "low" ? "low" : complexity === "medium" ? "medium" : "high";
-  const scenario   = data.scenario_type || "Market Entry Risk Assessment";
-  const summary    = data.summary       || "";
+  const scenario = data.scenario_type || "Market Entry Risk Assessment";
+  const summary = data.summary || "";
 
   resultsAreaEl.innerHTML =
-
-    /* Header summary */
     '<div class="result-summary">' +
       '<div>' +
         '<div class="result-summary-title">' + escHtml(scenario) + '</div>' +
         (summary ? '<div class="result-summary-sub">' + escHtml(summary) + '</div>' : "") +
       '</div>' +
-      '<span class="badge ' + escHtml(badgeClass) + '">' +
-        escHtml(data.complexity_level || "Unknown") +
-      '</span>' +
+      '<span class="badge ' + escHtml(badgeClass) + '">' + escHtml(data.complexity_level || "Unknown") + '</span>' +
     '</div>' +
-
-    /* Regulatory risks */
     '<div class="result-card">' +
       '<h3>Regulatory risks</h3>' +
       renderList(data.regulatory_risks) +
     '</div>' +
-
-    /* Next steps */
     '<div class="result-card">' +
       '<h3>Next steps</h3>' +
       renderList(data.next_steps) +
@@ -542,10 +379,6 @@ function renderList(items) {
   return "<ul>" + items.map(i => "<li>" + escHtml(String(i)) + "</li>").join("") + "</ul>";
 }
 
-/* ════════════════════════════════
-   EMPTY / ERROR STATES
-════════════════════════════════ */
-
 function buildWorkingState() {
   return '<div class="empty-state"><div class="empty-state-icon">⚙️</div>Agent is working…</div>';
 }
@@ -557,11 +390,6 @@ function buildClarifyState() {
 function buildErrorState(msg) {
   return '<div class="empty-state" style="color:var(--danger)">' + escHtml(msg) + '</div>';
 }
-
-/* ════════════════════════════════
-   DEFENSIVE JSON PARSER
-   4 tiers: direct → strip fences → bracket scan → fallback
-════════════════════════════════ */
 
 function parseJsonSafely(raw) {
   const t = String(raw || "").trim();
@@ -578,14 +406,11 @@ function parseJsonSafely(raw) {
 
   try { return JSON.parse(t); } catch (_) {}
 
-  const stripped = t
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/i, "")
-    .trim();
+  const stripped = t.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
   try { return JSON.parse(stripped); } catch (_) {}
 
   const first = stripped.indexOf("{");
-  const last  = stripped.lastIndexOf("}");
+  const last = stripped.lastIndexOf("}");
   if (first !== -1 && last > first) {
     try { return JSON.parse(stripped.slice(first, last + 1)); } catch (_) {}
   }
@@ -603,39 +428,29 @@ function parseJsonSafely(raw) {
   };
 }
 
-/* ════════════════════════════════
-   ERROR HANDLER
-════════════════════════════════ */
-
 function handleError(err) {
   console.error("Agent error:", err);
   hideAgentState();
   setStatus("Error: " + (err.message || "Unknown error — check the browser console."), "error");
   if (resultsAreaEl) {
-    resultsAreaEl.innerHTML = buildErrorState(
-      "The agent encountered an error. Check your API key, then try again."
-    );
+    resultsAreaEl.innerHTML = buildErrorState("The agent encountered an error. Check your API key, then try again.");
   }
   if (resetBtnEl) resetBtnEl.style.display = "";
 }
 
-/* ════════════════════════════════
-   RESET
-════════════════════════════════ */
-
 function resetAll() {
-  agentStep           = 1;
-  savedInputs         = {};
+  agentStep = 1;
+  savedInputs = {};
   conversationHistory = [];
-  isBusy              = false;
+  isBusy = false;
 
   if (productInputEl) { productInputEl.value = ""; productInputEl.disabled = false; }
-  if (originInputEl)  { originInputEl.value  = ""; originInputEl.disabled  = false; }
-  if (targetInputEl)  { targetInputEl.value  = ""; targetInputEl.disabled  = false; }
+  if (originInputEl) { originInputEl.value = ""; originInputEl.disabled = false; }
+  if (targetInputEl) { targetInputEl.value = ""; targetInputEl.disabled = false; }
 
   if (clarifyAnswerEl) clarifyAnswerEl.value = "";
-  if (clarifyListEl)   clarifyListEl.innerHTML = "";
-  if (clarifyBlockEl)  clarifyBlockEl.classList.remove("visible");
+  if (clarifyListEl) clarifyListEl.innerHTML = "";
+  if (clarifyBlockEl) clarifyBlockEl.classList.remove("visible");
 
   if (submitBtnEl) {
     submitBtnEl.textContent = "▶ Analyze Market Entry";
@@ -644,9 +459,12 @@ function resetAll() {
   if (resetBtnEl) resetBtnEl.style.display = "none";
 
   if (toolCallsLogEl) toolCallsLogEl.innerHTML = "";
-  if (thinkingLogEl)  thinkingLogEl.classList.remove("visible");
+  if (thinkingLogEl) thinkingLogEl.classList.remove("visible");
 
-  if (rawJsonBoxEl) { rawJsonBoxEl.textContent = ""; rawJsonBoxEl.classList.remove("active"); }
+  if (rawJsonBoxEl) {
+    rawJsonBoxEl.textContent = "";
+    rawJsonBoxEl.classList.remove("active");
+  }
 
   if (resultsAreaEl) {
     resultsAreaEl.innerHTML =
@@ -659,33 +477,24 @@ function resetAll() {
   if (productInputEl) productInputEl.focus();
 }
 
-/* ════════════════════════════════
-   UTILITIES
-════════════════════════════════ */
-
 function escHtml(str) {
   return String(str ?? "")
-    .replace(/&/g,  "&amp;")
-    .replace(/</g,  "&lt;")
-    .replace(/>/g,  "&gt;")
-    .replace(/"/g,  "&quot;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function toggleRawJson() {
   if (rawJsonBoxEl) rawJsonBoxEl.classList.toggle("active");
 }
 
-/* ════════════════════════════════
-   EVENT WIRING
-════════════════════════════════ */
-
 document.addEventListener("DOMContentLoaded", () => {
   checkApiKey();
 
   if (submitBtnEl) submitBtnEl.addEventListener("click", handleSubmit);
-  if (resetBtnEl)  resetBtnEl.addEventListener("click", resetAll);
+  if (resetBtnEl) resetBtnEl.addEventListener("click", resetAll);
 
-  /* Ctrl/Cmd + Enter to submit */
   document.addEventListener("keydown", (e) => {
     const mod = /mac/i.test(navigator.platform) ? e.metaKey : e.ctrlKey;
     if (mod && e.key === "Enter" && !isBusy) {
@@ -694,10 +503,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /* Wire raw JSON toggle if button exists */
   const rawToggleBtn = $("rawJsonToggle");
   if (rawToggleBtn) rawToggleBtn.addEventListener("click", toggleRawJson);
 
-  /* Hide reset button initially */
   if (resetBtnEl) resetBtnEl.style.display = "none";
-});
+}); am gasit asta... daca vezi este dublat, si asta in ciuda faptului ca in github nu se vede asa totul... abia cand am dat paste in notepad sa ti arat. mai aveam putin si imi venea sa plang... poti sa imi dai script js complet ca sa inlocuiesc tot? nu mai am nervi sa caut cerul prin hartii.  codul o sa ti l mai trimit in alta parte plus cealalata parte. ca sa ai totul complet iata si partea de index html de jos....   </section>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    const fileInput = document.getElementById("docUpload");
+    const fileMeta = document.getElementById("fileMeta");
+    const removeBtn = document.getElementById("removeDocBtn");
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        fileMeta.textContent = "No file selected";
+        return;
+      }
+      fileMeta.textContent = `${file.name} • ${Math.round(file.size / 1024)} KB • ${file.type || "unknown type"}`;
+    });
+
+    removeBtn.addEventListener("click", () => {
+      fileInput.value = "";
+      fileMeta.textContent = "No file selected";
+    });
+  </script>
+</body>
+</html>
