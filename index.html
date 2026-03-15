@@ -16,19 +16,18 @@
       --success: #1f8a4c;
       --warning: #b26b00;
       --danger: #b42318;
-      --shadow: 0 10px 30px rgba(20, 40, 80, 0.08);
+      --shadow: 0 10px 30px rgba(20,40,80,0.08);
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
       background: linear-gradient(180deg, #dff1ff 0%, #edf8ff 100%);
       color: var(--text);
+      min-height: 100vh;
     }
 
     .page {
@@ -37,9 +36,41 @@
       padding: 28px 18px 60px;
     }
 
+    /* ── API key error banner ── */
+    .key-error {
+      display: none;
+      background: #fde8e7;
+      border: 1.5px solid #e8aaaa;
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--danger);
+      align-items: center;
+      gap: 10px;
+    }
+    .key-error.visible { display: flex; }
+
+    /* ── disclaimer ── */
+    .disclaimer {
+      background: #fffbea;
+      border: 1px solid #f5d97a;
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #7a5a00;
+      line-height: 1.55;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .disclaimer-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── hero ── */
     .hero {
-      background: rgba(255,255,255,0.75);
-      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,0.82);
       border: 1px solid rgba(255,255,255,0.8);
       box-shadow: var(--shadow);
       border-radius: 24px;
@@ -47,45 +78,78 @@
       display: flex;
       align-items: center;
       gap: 18px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
-
     .logo-wrap {
-      width: 72px;
-      height: 72px;
+      width: 78px; height: 78px;
       border-radius: 18px;
       background: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 0 0 1px #e6eef7;
       overflow: hidden;
       flex-shrink: 0;
+      border: 1px solid #e6eef7;
+      font-size: 38px;
     }
+    .logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .hero h1 { margin: 0 0 5px; font-size: 28px; font-weight: 700; line-height: 1.15; }
+    .hero p  { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
-    .logo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    /* ── agent badge ── */
+    .agent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #1769e0, #0d4fb0);
+      color: white;
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .35px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 10px rgba(23,105,224,.25);
     }
-
-    .hero h1 {
-      margin: 0 0 6px;
-      font-size: 30px;
-      line-height: 1.1;
+    .agent-badge .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #7dffb3;
+      flex-shrink: 0;
+      animation: pulse 1.8s ease-in-out infinite;
     }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
 
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
+    /* ── agent state bar ── */
+    .agent-state-bar {
+      display: none;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 16px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: rgba(23,105,224,.06);
+      border: 1px solid rgba(23,105,224,.2);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      animation: fadeSlideIn .25s ease;
     }
+    .agent-state-bar.visible { display: flex; }
+    .agent-state-bar.step-clarify { color: var(--warning); background: rgba(178,107,0,.06); border-color: rgba(178,107,0,.22); }
+    .agent-state-bar.step-tools   { color: var(--accent);  background: rgba(23,105,224,.07); border-color: rgba(23,105,224,.2); }
+    .agent-state-bar.step-synth   { color: #5a22a0; background: rgba(90,34,160,.06); border-color: rgba(90,34,160,.2); }
+    .agent-state-bar.step-done    { color: var(--success); background: rgba(31,138,76,.06); border-color: rgba(31,138,76,.22); }
+    .state-icon  { font-size: 15px; flex-shrink: 0; }
+    .state-label { flex: 1; }
+    .state-step  { font-size: 11px; font-weight: 400; color: var(--muted); white-space: nowrap; }
 
+    /* ── layout ── */
     .layout {
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1.02fr 0.98fr;
       gap: 22px;
+      align-items: start;
     }
 
     .panel {
@@ -95,76 +159,60 @@
       border: 1px solid var(--border);
       padding: 22px;
     }
+    .panel h2 { margin: 0 0 7px; font-size: 19px; font-weight: 700; }
+    .sub { margin: 0 0 18px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
 
-    .panel h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
-
-    .panel .sub {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    label {
-      display: block;
-      font-weight: 700;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
+    label { display: block; font-weight: 700; font-size: 13.5px; margin-bottom: 7px; }
 
     textarea {
       width: 100%;
-      min-height: 160px;
       resize: vertical;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 13px 14px;
       font: inherit;
+      font-size: 14px;
       color: var(--text);
       outline: none;
       background: #fbfdff;
+      transition: border-color .15s, box-shadow .15s;
     }
-
-    textarea:focus,
-    .file-box:focus-within {
-      border-color: #8ab7ff;
-      box-shadow: 0 0 0 4px rgba(23, 105, 224, 0.10);
+    #userInput { min-height: 155px; }
+    #clarifyAnswerInput { min-height: 100px; }
+    textarea:focus {
+      border-color: #7aadff;
+      box-shadow: 0 0 0 3px rgba(23,105,224,.10);
     }
+    textarea:disabled { opacity: .55; background: #f2f6fb; cursor: not-allowed; }
 
     .examples {
-      margin-top: 12px;
+      margin-top: 11px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
-
     .example-chip {
       border: 1px solid var(--border);
-      background: #f7fbff;
+      background: #f5f9ff;
       color: var(--text);
       border-radius: 999px;
-      padding: 8px 12px;
+      padding: 8px 13px;
       font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.15s ease;
+      transition: .15s;
     }
+    .example-chip:hover:not(:disabled) { background: #eaf3ff; border-color: #b8d4ff; }
+    .example-chip:disabled { opacity: .45; cursor: not-allowed; }
 
-    .example-chip:hover {
-      background: #eef6ff;
-      border-color: #bdd7ff;
-    }
-
+    /* ── file box ── */
     .file-box {
       border: 1px dashed #9fbde2;
-      border-radius: 14px;
-      padding: 16px;
-      background: #f9fcff;
-      margin-top: 18px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #f8fcff;
+      margin-top: 16px;
     }
-
     .file-row {
       display: flex;
       align-items: center;
@@ -172,547 +220,1401 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-
     .file-hint {
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
-      margin-top: 8px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      margin-top: 7px;
     }
-
-    input[type="file"] {
-      font: inherit;
-      max-width: 100%;
-    }
-
+    input[type="file"] { font: inherit; font-size: 13px; max-width: 100%; }
     .file-preview {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 12px;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
       background: white;
       border: 1px solid var(--border);
       display: none;
+      font-size: 13px;
+      line-height: 1.5;
     }
-
-    .file-preview.active {
-      display: block;
-    }
-
+    .file-preview.active { display: block; }
     .file-preview img {
       max-width: 100%;
-      max-height: 180px;
-      border-radius: 10px;
+      max-height: 160px;
+      border-radius: 8px;
       display: block;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
+    /* ── clarification block ── */
+    .clarify-block {
+      display: none;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 2px dashed rgba(178,107,0,.28);
+      animation: fadeSlideIn .3s ease;
+    }
+    .clarify-block.visible { display: block; }
+
+    .clarify-questions-box {
+      background: #fffaf0;
+      border: 1px solid #f3d7a8;
+      border-radius: 12px;
+      padding: 13px 15px;
+      margin-bottom: 13px;
+    }
+    .clarify-questions-box p {
+      margin: 0 0 9px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #7a5200;
+    }
+    .clarify-questions-box ol { margin: 0; padding-left: 20px; }
+    .clarify-questions-box li {
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #5a3d00;
+      line-height: 1.5;
+    }
+
+    /* ── action buttons ── */
     .actions {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 18px;
+      gap: 10px;
+      margin-top: 16px;
       flex-wrap: wrap;
     }
-
     button {
       border: none;
       background: var(--accent);
       color: white;
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.15s ease;
-    }
-
-    button:hover {
-      background: var(--accent-dark);
-    }
-
-    button:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .secondary-btn {
-      background: #eff5fb;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .secondary-btn:hover {
-      background: #e8f1fb;
-    }
-
-    .status {
-      min-height: 22px;
+      border-radius: 12px;
+      padding: 12px 18px;
       font-size: 14px;
       font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, transform .08s;
     }
+    button:hover:not(:disabled) { background: var(--accent-dark); }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
 
+    .secondary-btn {
+      background: #eef4fb;
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .secondary-btn:hover:not(:disabled) { background: #e4eef8; }
+
+    .reset-btn {
+      background: #fde8e7;
+      color: var(--danger);
+      border: 1px solid #f5c5c3;
+      font-size: 13px;
+    }
+    .reset-btn:hover:not(:disabled) { background: #fad4d2; }
+
+    /* ── status bar ── */
+    .status {
+      min-height: 20px;
+      margin-top: 13px;
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .status.loading { color: var(--accent); }
     .status.success { color: var(--success); }
-    .status.error { color: var(--danger); }
+    .status.error   { color: var(--danger); }
 
-    .result-grid {
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(23,105,224,.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .65s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* ── agent activity log ── */
+    .thinking-log { margin-top: 16px; display: none; }
+    .thinking-log.visible { display: block; }
+    .thinking-log-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+    .tool-call {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 8px 11px;
+      border-radius: 9px;
+      border: 1px solid #cfe3ff;
+      background: #f0f7ff;
+      margin-bottom: 5px;
+      font-size: 13px;
+      animation: fadeSlideIn .3s ease;
+    }
+    .tool-call.done  { border-color: #b3e6c4; background: #f0fbf4; }
+    .tool-call.error { border-color: #f5c5c3; background: #fef5f5; }
+    .tool-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .tool-name { font-weight: 700; color: var(--accent); font-size: 13px; }
+    .tool-name.done  { color: var(--success); }
+    .tool-name.error { color: var(--danger); }
+    .tool-args { color: var(--muted); font-size: 11.5px; margin-top: 2px; font-family: monospace; }
+    .tool-result-preview { color: #2a5a3a; font-size: 11px; margin-top: 2px; font-style: italic; }
+
+    .log-phase-divider {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      color: #8ba0b8;
+      padding: 5px 0 3px;
+      border-top: 1px dashed var(--border);
+      margin: 4px 0;
+    }
+    .log-phase-divider:first-child { border-top: none; margin-top: 0; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ── right panel: results ── */
+    .result-grid { display: grid; gap: 12px; }
+
+    .result-summary {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: #f5faff;
       display: grid;
-      gap: 14px;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+    }
+    .result-summary-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .result-summary-sub {
+      font-size: 12.5px;
+      color: var(--muted);
     }
 
     .result-card {
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 14px 16px;
       background: #fcfeff;
     }
-
     .result-card h3 {
-      margin: 0 0 10px;
-      font-size: 15px;
+      margin: 0 0 9px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      color: var(--muted);
     }
-
-    .result-card ul {
-      margin: 0;
-      padding-left: 18px;
-    }
-
+    .result-card ul { margin: 0; padding-left: 17px; }
     .result-card li {
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       line-height: 1.45;
-      color: #22384d;
+      font-size: 14px;
+      color: #1e3448;
     }
+    .result-card li:last-child { margin-bottom: 0; }
 
     .badge {
       display: inline-flex;
       align-items: center;
       border-radius: 999px;
-      padding: 8px 12px;
+      padding: 6px 14px;
       font-size: 13px;
       font-weight: 700;
+      white-space: nowrap;
     }
+    .badge.low    { background: #e6f7ee; color: #166835; }
+    .badge.medium { background: #fff3dc; color: #8a5000; }
+    .badge.high   { background: #fde8e7; color: #a82015; }
 
-    .badge.low {
-      background: #e8f7ee;
-      color: #1f8a4c;
-    }
-
-    .badge.medium {
-      background: #fff3df;
-      color: #a76300;
-    }
-
-    .badge.high {
-      background: #fde8e7;
-      color: #b42318;
-    }
-
-    .flow-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
+    .flow-wrap { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .flow-step {
       background: white;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      min-width: 110px;
+      border-radius: 10px;
+      padding: 8px 12px;
+      min-width: 100px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       text-align: center;
-      box-shadow: 0 3px 10px rgba(15, 45, 75, 0.04);
+      box-shadow: 0 2px 6px rgba(15,45,75,.05);
     }
-
-    .flow-arrow {
-      font-size: 18px;
-      color: var(--accent);
-      font-weight: bold;
-    }
+    .flow-arrow { font-size: 16px; color: var(--accent); }
 
     .empty-state {
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
       border: 1px dashed var(--border);
-      border-radius: 16px;
-      padding: 18px;
+      border-radius: 14px;
+      padding: 20px 18px;
       background: #fbfdff;
+      text-align: center;
     }
+    .empty-state-icon { font-size: 28px; margin-bottom: 8px; }
 
     .raw-json {
       margin-top: 10px;
-      background: #0f1b2a;
-      color: #dbe8f5;
+      background: #0d1a28;
+      color: #c8ddf0;
       border-radius: 12px;
       padding: 14px;
       overflow: auto;
       font-size: 12px;
       line-height: 1.55;
       display: none;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 340px;
     }
-
-    .raw-json.active {
-      display: block;
-    }
+    .raw-json.active { display: block; }
 
     @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        align-items: flex-start;
-      }
-
-      .hero h1 {
-        font-size: 26px;
-      }
+      .layout { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <section class="hero">
-      <div class="logo-wrap">
-        <img src="logo.png" alt="CrossBorder AI Guide Logo" />
-      </div>
-      <div>
-        <h1>CrossBorder AI Guide</h1>
-        <p>
-          Turn complex cross-border procedures into clear action plans with required
-          documents, institutions, and visual process guidance.
-        </p>
-      </div>
-    </section>
+<div class="page">
 
-    <section class="layout">
-      <div class="panel">
-        <h2>Describe your situation</h2>
-        <p class="sub">
-          Enter a civil, administrative, or market-entry scenario. You can also upload a
-          supporting document to prepare multimodal analysis.
-        </p>
-
-        <label for="userInput">Case description</label>
-        <textarea
-          id="userInput"
-          placeholder="Example: I got married in Germany and need to register the marriage in Romania."
-        ></textarea>
-
-        <div class="examples">
-          <button class="example-chip" type="button" onclick="setExample(1)">
-            Marriage registration in Romania
-          </button>
-          <button class="example-chip" type="button" onclick="setExample(2)">
-            Indian company entering Germany
-          </button>
-        </div>
-
-        <div class="file-box">
-          <label for="documentFile">Upload supporting document</label>
-          <div class="file-row">
-            <input id="documentFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" />
-            <button type="button" class="secondary-btn" onclick="clearFile()">Remove file</button>
-          </div>
-          <div class="file-hint">
-            Supported now: PDF or image upload in the interface. Actual AI document reading
-            will work after backend/API integration.
-          </div>
-          <div id="filePreview" class="file-preview"></div>
-        </div>
-
-        <div class="actions">
-          <button id="analyzeBtn" type="button" onclick="analyzeProcedure()">
-            Analyze Cross-Border Case
-          </button>
-          <button type="button" class="secondary-btn" onclick="toggleJson()">
-            Toggle raw JSON
-          </button>
-        </div>
-
-        <div id="status" class="status"></div>
-      </div>
-
-      <div class="panel">
-        <h2>Action plan</h2>
-        <p class="sub">
-          The agent will classify the scenario, list documents and institutions, and
-          generate a procedural flow.
-        </p>
-
-        <div id="resultsArea" class="result-grid">
-          <div class="empty-state">
-            No analysis yet. Submit a case to generate a structured action plan and visual flow.
-          </div>
-        </div>
-
-        <pre id="rawJson" class="raw-json"></pre>
-      </div>
-    </section>
+  <!-- API key error — shown by JS if key is missing or placeholder -->
+  <div class="key-error" id="keyError" role="alert">
+    <span>🔑</span>
+    <span>Missing Gemini API key. Open <code>config.js</code> and paste your real API key where it says <code>PASTE_YOUR_REAL_KEY_HERE</code>.</span>
   </div>
 
-  <script>
-    const userInput = document.getElementById("userInput");
-    const analyzeBtn = document.getElementById("analyzeBtn");
-    const statusBox = document.getElementById("status");
-    const resultsArea = document.getElementById("resultsArea");
-    const rawJsonBox = document.getElementById("rawJson");
-    const documentFile = document.getElementById("documentFile");
-    const filePreview = document.getElementById("filePreview");
+  <!-- Disclaimer -->
+  <div class="disclaimer" role="note">
+    <span class="disclaimer-icon">⚠️</span>
+    <div>
+      <strong>Hackathon prototype — not an official tool.</strong>
+      This is an experimental Gemini function-calling agent built for a hackathon.
+      All output is AI-generated and may be incomplete or outdated.
+      It does not constitute legal, administrative, or professional advice.
+      Uploaded files are <strong>not read or transmitted</strong> — only the filename and file type
+      are shared with the agent as context metadata.
+      Always verify requirements with official government sources.
+      The author accepts no responsibility for decisions made based on this tool's output.
+    </div>
+  </div>
 
-    let lastResponseData = null;
+  <!-- Hero -->
+  <section class="hero">
+    <div class="logo-wrap">
+      <img src="logo.png" alt="" onerror="this.style.display='none';this.parentElement.textContent='🌐'" />
+    </div>
+    <div>
+      <h1>CrossBorder AI Guide</h1>
+      <p>A Gemini function-calling agent that turns cross-border administrative scenarios into structured action plans — using local tools for document requirements, institutions, and recognition checks.</p>
+    </div>
+  </section>
 
-    function setExample(type) {
-      if (type === 1) {
-        userInput.value = "I got married in Germany and need to register the marriage in Romania.";
-      } else if (type === 2) {
-        userInput.value = "A company from India wants to sell aluminum kitchen products in Germany.";
+  <!-- Agent badge — CHANGED: 2.0 → 2.5 -->
+  <div class="agent-badge">
+    <span class="dot"></span>
+    Gemini 2.5 Flash &nbsp;·&nbsp; Function Calling Agent &nbsp;·&nbsp; 3 local tools &nbsp;·&nbsp; 2-step flow
+  </div>
+
+  <!-- Agent state bar -->
+  <div class="agent-state-bar" id="agentStateBar">
+    <span class="state-icon"  id="agentStateIcon">🔍</span>
+    <span class="state-label" id="agentStateLabel">Reviewing case</span>
+    <span class="state-step"  id="agentStateStep"></span>
+  </div>
+
+  <!-- Main layout -->
+  <section class="layout">
+
+    <!-- LEFT: input panel -->
+    <div class="panel">
+      <h2>Describe your situation</h2>
+      <p class="sub" id="panelSub">
+        The agent reviews your case, may ask up to 2 clarifying questions if critical details are missing, then calls its tools to build a complete action plan.
+      </p>
+
+      <label for="userInput">Case description</label>
+      <textarea
+        id="userInput"
+        placeholder="Example: I got married in Germany and need to register the marriage in Romania. I am Romanian, my spouse is German."
+      ></textarea>
+
+      <div class="examples">
+        <button class="example-chip" type="button" onclick="setExample(1)">Marriage registration RO</button>
+        <button class="example-chip" type="button" onclick="setExample(2)">Indian company → Germany</button>
+        <button class="example-chip" type="button" onclick="setExample(3)">Romanian diploma in France</button>
+      </div>
+
+      <!-- File upload (metadata context only) -->
+      <div class="file-box">
+        <label for="documentFile">Attach a document for context (optional)</label>
+        <div class="file-row">
+          <input id="documentFile" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" />
+          <button type="button" class="secondary-btn" onclick="clearFile()">Remove</button>
+        </div>
+        <p class="file-hint">
+          ⚠ File contents are <strong>not read or uploaded</strong>.
+          Only the filename and file type are passed to the agent as context.
+        </p>
+        <div id="filePreview" class="file-preview"></div>
+      </div>
+
+      <!-- Clarification block: hidden until agent returns questions -->
+      <div class="clarify-block" id="clarifyBlock">
+        <div class="clarify-questions-box">
+          <p>🤔 Before calling its tools, the agent needs a couple more details:</p>
+          <ol id="clarifyList"></ol>
+        </div>
+        <label for="clarifyAnswerInput">Your answers</label>
+        <textarea
+          id="clarifyAnswerInput"
+          placeholder="Answer the questions above. You can number your answers: 1. ... 2. ..."
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button id="analyzeBtn" type="button" onclick="handleSubmit()">▶ Analyze Case</button>
+        <button type="button" class="secondary-btn" onclick="toggleJson()">Raw JSON</button>
+        <button type="button" class="reset-btn" id="resetBtn" onclick="resetAll()" style="display:none">↺ Start over</button>
+      </div>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+
+      <!-- Agent activity log -->
+      <div class="thinking-log" id="thinkingLog">
+        <div class="thinking-log-title">🤖 Agent activity</div>
+        <div id="toolCallsLog"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: results panel -->
+    <div class="panel">
+      <h2>Action plan</h2>
+      <p class="sub">The structured cross-border action plan generated by the agent after tool execution.</p>
+
+      <div id="resultsArea" class="result-grid">
+        <div class="empty-state">
+          <div class="empty-state-icon">🗺️</div>
+          Submit a case on the left to generate a structured action plan.
+        </div>
+      </div>
+
+      <pre id="rawJson" class="raw-json" aria-label="Raw JSON response"></pre>
+    </div>
+
+  </section>
+</div>
+
+<!-- config.js must provide: const GEMINI_API_KEY = "your-key-here"; -->
+<script src="config.js"></script>
+<script>
+/*
+ * CrossBorder AI Guide — Gemini Function Calling Agent
+ * Hackathon demo · Single HTML file · Local tools · 2-step flow
+ *
+ * AGENT FLOW:
+ *   Step 1 — Review case:
+ *     Agent decides if critical info is missing.
+ *     A) Info sufficient → call tools immediately → synthesize report
+ *     B) Info missing    → return clarification questions (max 2) → wait for answers
+ *
+ *   Step 2 — Tool phase (entered after clarification, or directly from Step 1):
+ *     Agent calls tools autonomously (Gemini decides order).
+ *     get_country_requirements + get_institution_contacts required minimum.
+ *     check_document_recognition called when relevant.
+ *     After tools: synthesize final JSON report.
+ *
+ * TOOLS (local — no external APIs):
+ *   get_country_requirements(country_from, country_to, document_type)
+ *   get_institution_contacts(country, scenario_type)
+ *   check_document_recognition(document_type, issuing_country, target_country)
+ */
+
+  /* ── Constants ── */
+  const GEMINI_MODEL    = "gemini-2.5-flash";
+  const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
+  const MAX_TURNS       = 8;
+
+  /* ── DOM refs ── */
+  const keyErrorEl          = document.getElementById("keyError");
+  const userInputEl         = document.getElementById("userInput");
+  const clarifyBlock        = document.getElementById("clarifyBlock");
+  const clarifyList         = document.getElementById("clarifyList");
+  const clarifyAnswerInput  = document.getElementById("clarifyAnswerInput");
+  const analyzeBtnEl        = document.getElementById("analyzeBtn");
+  const resetBtnEl          = document.getElementById("resetBtn");
+  const statusBox           = document.getElementById("status");
+  const resultsArea         = document.getElementById("resultsArea");
+  const rawJsonBox          = document.getElementById("rawJson");
+  const documentFileEl      = document.getElementById("documentFile");
+  const filePreviewEl       = document.getElementById("filePreview");
+  const thinkingLog         = document.getElementById("thinkingLog");
+  const toolCallsLog        = document.getElementById("toolCallsLog");
+  const agentStateBar       = document.getElementById("agentStateBar");
+  const agentStateIcon      = document.getElementById("agentStateIcon");
+  const agentStateLabel     = document.getElementById("agentStateLabel");
+  const agentStateStep      = document.getElementById("agentStateStep");
+  const panelSub            = document.getElementById("panelSub");
+
+  /* ── App state ── */
+  let filePayload         = null;
+  let isBusy              = false;
+  let agentStep           = 1;
+  let savedOriginalCase   = "";
+  let conversationHistory = [];
+
+  /* ── API key guard ── */
+  function checkApiKey() {
+    const missing =
+      typeof GEMINI_API_KEY === "undefined" ||
+      !GEMINI_API_KEY ||
+      GEMINI_API_KEY === "PASTE_YOUR_REAL_KEY_HERE";
+    keyErrorEl.classList.toggle("visible", missing);
+    if (missing) analyzeBtnEl.disabled = true;
+    return !missing;
+  }
+
+  /* ════════════════════════════════
+     AGENT STATE BAR
+     Shows current phase clearly for judges.
+  ════════════════════════════════ */
+
+  const STATES = {
+    reviewing:    { icon: "🔍", label: "Reviewing case",              cls: "",             step: "Step 1 of 2" },
+    clarifying:   { icon: "💬", label: "Asking clarifying questions", cls: "step-clarify", step: "Step 1 of 2" },
+    tools:        { icon: "⚙️",  label: "Calling tools",               cls: "step-tools",   step: "Step 2 of 2" },
+    synthesizing: { icon: "🧩", label: "Synthesizing final plan",     cls: "step-synth",   step: "Step 2 of 2" },
+    done:         { icon: "✅", label: "Action plan ready",            cls: "step-done",    step: "Complete"    },
+  };
+
+  function setAgentState(name) {
+    const s = STATES[name];
+    if (!s) return;
+    agentStateBar.className     = "agent-state-bar visible " + s.cls;
+    agentStateIcon.textContent  = s.icon;
+    agentStateLabel.textContent = s.label;
+    agentStateStep.textContent  = s.step;
+  }
+
+  function hideAgentState() {
+    agentStateBar.className = "agent-state-bar";
+  }
+
+  /* ════════════════════════════════
+     TOOL DECLARATIONS
+     Sent to Gemini so it can decide autonomously when and what to call.
+  ════════════════════════════════ */
+
+  const TOOL_DECLARATIONS = [
+    {
+      name: "get_country_requirements",
+      description:
+        "Returns official administrative requirements for a cross-border procedure between two countries: " +
+        "required documents, procedural notes, and legal basis. " +
+        "Call this whenever you need to know what documents or steps a cross-border procedure requires.",
+      parameters: {
+        type: "object",
+        properties: {
+          country_from:  { type: "string", description: "Country where the event occurred or the person is from (e.g. 'Germany')." },
+          country_to:    { type: "string", description: "Country where the procedure must be completed (e.g. 'Romania')." },
+          document_type: { type: "string", description: "Procedure type (e.g. 'marriage registration', 'diploma recognition', 'company registration')." }
+        },
+        required: ["country_from", "country_to", "document_type"]
+      }
+    },
+    {
+      name: "get_institution_contacts",
+      description:
+        "Returns institutions and government bodies responsible for a procedure in a given country. " +
+        "Returns names and departments only — no URLs. " +
+        "Call this whenever the user needs to know which authority to contact.",
+      parameters: {
+        type: "object",
+        properties: {
+          country:       { type: "string", description: "Country where the institutions are located." },
+          scenario_type: { type: "string", description: "Procedure type (e.g. 'civil registry', 'trade compliance', 'diploma recognition')." }
+        },
+        required: ["country", "scenario_type"]
+      }
+    },
+    {
+      name: "check_document_recognition",
+      description:
+        "Checks whether a document from one country is recognized in another, what process is required " +
+        "(apostille, full legalization, or certified translation), and any key caveats. " +
+        "Call this whenever cross-border document validity is part of the case.",
+      parameters: {
+        type: "object",
+        properties: {
+          document_type:   { type: "string", description: "Document type (e.g. 'marriage certificate', 'university diploma')." },
+          issuing_country: { type: "string", description: "Country that issued the document." },
+          target_country:  { type: "string", description: "Country where the document needs to be recognized." }
+        },
+        required: ["document_type", "issuing_country", "target_country"]
       }
     }
+  ];
 
-    documentFile.addEventListener("change", handleFilePreview);
+  /* ════════════════════════════════
+     LOCAL TOOL IMPLEMENTATIONS
+     All tools run entirely in the browser.
+     Returns structured data that Gemini uses to reason.
+     In production these would call real government APIs.
+  ════════════════════════════════ */
 
-    function handleFilePreview() {
-      const file = documentFile.files[0];
-      if (!file) {
-        filePreview.classList.remove("active");
-        filePreview.innerHTML = "";
-        return;
+  function executeTool(name, args) {
+    switch (name) {
+      case "get_country_requirements":   return toolGetCountryRequirements(args);
+      case "get_institution_contacts":   return toolGetInstitutionContacts(args);
+      case "check_document_recognition": return toolCheckDocumentRecognition(args);
+      default: return { error: "Unknown tool: " + name };
+    }
+  }
+
+  function toolGetCountryRequirements({ country_from, country_to, document_type }) {
+    const key = [country_from, country_to, document_type].map(s => (s||"").toLowerCase().trim()).join("|");
+
+    const db = {
+      "germany|romania|marriage registration": {
+        required_documents: [
+          "Original German marriage certificate (Heiratsurkunde)",
+          "Apostille on the German marriage certificate (Hague Convention)",
+          "Certified Romanian translation of the marriage certificate",
+          "Valid identity documents of both spouses (passports or national IDs)",
+          "Romanian birth certificate of the Romanian spouse",
+          "Extract from the Romanian civil registry (livret de familie or equivalent)"
+        ],
+        procedural_notes: [
+          "Romania is a Hague Convention signatory — apostille is sufficient, full legalization not required",
+          "Translations must be performed by an authorized translator in Romania",
+          "Registration is done at the local Starea Civila in the Romanian spouse's place of residence",
+          "The Romanian spouse must be present or provide a notarized power of attorney",
+          "Standard processing time: up to 30 days after complete document submission"
+        ],
+        legal_basis: "Romanian Civil Code Art. 281-294; Law 119/1996 on civil registry acts"
+      },
+      "india|germany|company registration": {
+        required_documents: [
+          "Indian company incorporation documents (apostilled)",
+          "Certified German translation of all Indian documents",
+          "Articles of association (Gesellschaftsvertrag) in German, notarized",
+          "Director and shareholder identity documents",
+          "German registered office address (Geschäftsadresse)",
+          "Capital deposit proof (minimum EUR 25,000 for GmbH)",
+          "Trade register application (Handelsregisteranmeldung)"
+        ],
+        procedural_notes: [
+          "Most common structure for foreign market entry: GmbH",
+          "Registration via notary with the local Handelsregister",
+          "Tax registration at Finanzamt required within 4 weeks of founding",
+          "Gewerbeanmeldung (trade license) required for commercial activities",
+          "India-Germany Double Taxation Avoidance Agreement applies"
+        ],
+        legal_basis: "GmbHG (GmbH Act); HGB §§ 1-104"
+      },
+      "romania|france|diploma recognition": {
+        required_documents: [
+          "Original Romanian diploma",
+          "Apostille on the diploma (Romania is Hague Convention signatory)",
+          "Official academic transcript with grades",
+          "Certified French translation of all documents by a sworn translator",
+          "Completed ENIC-NARIC France recognition application",
+          "Proof of identity (passport or national ID)"
+        ],
+        procedural_notes: [
+          "France uses the ENIC-NARIC system for foreign academic credential recognition",
+          "Academic recognition and professional authorization are two separate procedures",
+          "Regulated professions (medicine, law, architecture) require additional sector-specific approval",
+          "Processing time: 3–6 months for academic recognition"
+        ],
+        legal_basis: "EU Directive 2005/36/EC; French decree 2013-756"
       }
+    };
 
-      const fileType = file.type || "Unknown type";
-      const fileSizeKB = Math.round(file.size / 1024);
+    if (db[key]) return { success: true, country_from, country_to, document_type, ...db[key] };
 
-      filePreview.classList.add("active");
-      filePreview.innerHTML = `
-        <strong>Attached file:</strong> ${escapeHtml(file.name)}<br>
-        <strong>Type:</strong> ${escapeHtml(fileType)}<br>
-        <strong>Size:</strong> ${fileSizeKB} KB
-      `;
+    return {
+      success: true, country_from, country_to, document_type,
+      required_documents: [
+        "Original document(s) for the procedure",
+        "Apostille or full legalization (depending on Hague Convention membership)",
+        "Certified translation into the official language of the target country",
+        "Valid identification documents",
+        "Completed application forms from the relevant authority"
+      ],
+      procedural_notes: [
+        "Verify whether both countries are Hague Apostille Convention signatories",
+        "Certified translations must be done by a sworn translator in the target country",
+        "Processing times vary — contact the institution directly for current estimates"
+      ],
+      legal_basis: "Varies by country pair — verify with the competent authority"
+    };
+  }
 
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          filePreview.innerHTML += `<img src="${e.target.result}" alt="Document preview">`;
-        };
-        reader.readAsDataURL(file);
+  function toolGetInstitutionContacts({ country, scenario_type }) {
+    const key = (country + "|" + scenario_type).toLowerCase().trim();
+
+    const db = {
+      "romania|civil registry": {
+        institutions: [
+          "Starea Civilă — civil registry office at the local Primărie (city hall)",
+          "Direcția de Evidență a Persoanelor (DEP) — population records directorate",
+          "Ministerul Afacerilor Interne — national oversight body for civil registry",
+          "Direcția Generală de Pașapoarte — for passport updates after registration"
+        ],
+        contact_guidance: "Visit the Starea Civila office at your local Primărie in person. Appointments may be required.",
+        note: "No website links provided. Contact your local Primărie directly."
+      },
+      "germany|civil registry": {
+        institutions: [
+          "Standesamt (Civil Registry Office) — located in the local Rathaus (city hall)",
+          "Einwohnermeldeamt — Residents' Registration Office for address registration",
+          "Bundesverwaltungsamt — Federal Administration Office for cross-border civil matters"
+        ],
+        contact_guidance: "The Standesamt is in the Rathaus. Appointments are required — book in advance.",
+        note: "No website links provided. Contact your local Rathaus."
+      },
+      "germany|trade compliance": {
+        institutions: [
+          "Zollamt (Customs Office) — import/export duties and customs clearance",
+          "IHK (Industrie- und Handelskammer) — mandatory Chamber of Commerce membership",
+          "Bundeszentralamt für Steuern (BZSt) — Federal Central Tax Office",
+          "Gewerbeamt — local Trade Office for business registration (Gewerbeanmeldung)",
+          "DIHK — German Chambers of Commerce and Industry (federal level)"
+        ],
+        contact_guidance: "Contact your local IHK first — free guidance for foreign companies entering Germany.",
+        note: "No website links provided. Contact IHK or Gewerbeamt in the relevant city."
+      },
+      "france|diploma recognition": {
+        institutions: [
+          "ENIC-NARIC France — national center for foreign credential recognition",
+          "Ministère de l'Enseignement Supérieur et de la Recherche",
+          "Relevant Ordre professionnel (Ordre des Médecins, Ordre des Avocats, etc.)",
+          "CIEP (Centre International d'Études Pédagogiques) — for school-level recognition"
+        ],
+        contact_guidance: "Submit directly to ENIC-NARIC France for academic recognition. For regulated professions, contact the relevant Ordre.",
+        note: "No website links provided."
       }
-    }
+    };
 
-    function clearFile() {
-      documentFile.value = "";
-      filePreview.classList.remove("active");
-      filePreview.innerHTML = "";
-    }
+    if (db[key]) return { success: true, country, scenario_type, ...db[key] };
 
-    function setStatus(message, type = "") {
-      statusBox.textContent = message;
-      statusBox.className = `status ${type}`.trim();
-    }
+    return {
+      success: true, country, scenario_type,
+      institutions: [
+        "National civil registry or administrative authority",
+        "Local municipality or city hall",
+        "Relevant national ministry (varies by procedure type)",
+        "Chamber of Commerce (for business and trade matters)",
+        "National ENIC-NARIC center (for academic credential recognition)"
+      ],
+      contact_guidance: "Contact the relevant national authority. The embassy or consulate of the target country can refer you to the correct institution.",
+      note: "No website links provided. Always verify through official government channels."
+    };
+  }
 
-    function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  function toolCheckDocumentRecognition({ document_type, issuing_country, target_country }) {
+    const key = [document_type, issuing_country, target_country].map(s => (s||"").toLowerCase().trim()).join("|");
 
-    function renderResults(data) {
-      const complexity = (data.complexity_level || "").toLowerCase();
-      const badgeClass =
-        complexity === "low" ? "low" :
-        complexity === "medium" ? "medium" :
-        "high";
+    const hague = [
+      "germany","romania","france","italy","spain","netherlands","belgium","austria",
+      "poland","czech republic","hungary","portugal","india","united states","uk",
+      "united kingdom","switzerland","sweden","norway","denmark","finland","greece"
+    ];
+    const bothHague =
+      hague.includes((issuing_country||"").toLowerCase()) &&
+      hague.includes((target_country||"").toLowerCase());
 
-      resultsArea.innerHTML = `
-        <div class="result-card">
-          <h3>Scenario Type</h3>
-          <div>${escapeHtml(data.scenario_type || "Not available")}</div>
-        </div>
-
-        <div class="result-card">
-          <h3>Complexity Level</h3>
-          <span class="badge ${badgeClass}">
-            ${escapeHtml(data.complexity_level || "Unknown")}
-          </span>
-        </div>
-
-        <div class="result-card">
-          <h3>Required Documents</h3>
-          ${renderList(data.required_documents)}
-        </div>
-
-        <div class="result-card">
-          <h3>Relevant Institutions</h3>
-          ${renderList(data.institutions)}
-        </div>
-
-        <div class="result-card">
-          <h3>Next Steps</h3>
-          ${renderList(data.next_steps)}
-        </div>
-
-        <div class="result-card">
-          <h3>Process Flow</h3>
-          ${renderFlow(data.process_flow)}
-        </div>
-      `;
-
-      rawJsonBox.textContent = JSON.stringify(data, null, 2);
-      lastResponseData = data;
-    }
-
-    function renderList(items) {
-      if (!Array.isArray(items) || items.length === 0) {
-        return `<div class="empty-state">No items returned.</div>`;
+    const db = {
+      "marriage certificate|germany|romania": {
+        recognized: true,
+        process_required: "Apostille + certified Romanian translation",
+        steps: [
+          "Obtain the marriage certificate from the German Standesamt",
+          "Request Apostille from the competent German authority (Regierungspräsidium or equivalent)",
+          "Have the apostilled certificate translated by a certified Romanian translator",
+          "Submit to Romanian Starea Civila with all supporting documents"
+        ],
+        caveats: "Both Germany and Romania are Hague Convention signatories — apostille is sufficient.",
+        timeline: "Apostille in Germany: 1–4 weeks. Romanian registration: up to 30 days after submission."
+      },
+      "university diploma|romania|france": {
+        recognized: true,
+        process_required: "Apostille + certified French translation + ENIC-NARIC France submission",
+        steps: [
+          "Obtain apostille from the Romanian Ministry of Education or competent authority",
+          "Have diploma and transcripts translated by a certified French translator",
+          "Submit recognition application to ENIC-NARIC France",
+          "For regulated professions: apply separately to the relevant Ordre professionnel"
+        ],
+        caveats: "EU Directive 2005/36/EC applies. Academic recognition and professional authorization are two separate tracks.",
+        timeline: "ENIC-NARIC France: 3–6 months. Professional recognition: varies by profession."
       }
+    };
 
-      return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    if (db[key]) return { success: true, document_type, issuing_country, target_country, ...db[key] };
+
+    return {
+      success: true, document_type, issuing_country, target_country,
+      recognized: bothHague ? "likely — both countries are Hague Convention signatories" : "verify — Hague membership uncertain",
+      process_required: bothHague
+        ? "Apostille + certified translation"
+        : "Full legalization chain (notarization → Ministry of Foreign Affairs → embassy/consulate) + certified translation",
+      steps: bothHague
+        ? [
+            "Request apostille from the competent authority in " + issuing_country,
+            "Obtain a certified translation by a sworn translator in " + target_country,
+            "Submit with all supporting documents to the relevant authority in " + target_country
+          ]
+        : [
+            "Notarize the original document in " + issuing_country,
+            "Legalize at the Ministry of Foreign Affairs in " + issuing_country,
+            "Legalize at the embassy/consulate of " + target_country + " in " + issuing_country,
+            "Obtain a certified translation in " + target_country,
+            "Submit to the competent authority in " + target_country
+          ],
+      caveats: "Always verify current requirements with the receiving institution — procedures can change.",
+      timeline: "Varies — contact the relevant authority for current processing times."
+    };
+  }
+
+  /* ════════════════════════════════
+     SYSTEM PROMPTS
+     CHANGED: both prompts now include explicit English-only language rule.
+  ════════════════════════════════ */
+
+  function buildReviewPrompt() {
+    return (
+      "ABSOLUTE RULE — OUTPUT LANGUAGE: You MUST write every single word of your output in English. " +
+      "This includes all JSON string values, clarification questions, lists, labels, and notes. " +
+      "Do NOT use Romanian, French, German, or any other language. English only, no exceptions. " +
+      "Even if the user writes in Romanian or another language, your output must be in English. " +
+      "\n\nYou are CrossBorder AI Guide, an expert AI agent for cross-border administrative and regulatory procedures. " +
+      "You have three tools: get_country_requirements, get_institution_contacts, check_document_recognition. " +
+      "\n\nPHASE: Review. Decide if you have enough information to call your tools." +
+      "\n\nIF critical information is genuinely missing " +
+      "(both countries not clear, procedure type ambiguous, or key personal context unknown): " +
+      'Return ONLY this JSON — nothing else, no markdown: {"clarification_needed":true,"questions":["short Q1 in English?","short Q2 in English?"]} ' +
+      "Maximum 2 questions. Only ask what you truly need. Questions must be in English." +
+      "\n\nIF you have enough information: " +
+      "Do NOT return text yet. Call your tools first. " +
+      "You MUST call get_country_requirements AND get_institution_contacts as a minimum. " +
+      "Also call check_document_recognition when document recognition is relevant to the case. " +
+      "After all tools return, synthesize into the final JSON report. All string values in the JSON must be in English." +
+      "\n\nFINAL REPORT FORMAT (after tools only, no markdown, no extra text, no URLs, all values in English): " +
+      '{"scenario_type":"","required_documents":[],"institutions":[],"complexity_level":"Low|Medium|High","next_steps":[],"process_flow":[]}'
+    );
+  }
+
+  function buildToolPhasePrompt() {
+    return (
+      "ABSOLUTE RULE — OUTPUT LANGUAGE: You MUST write every single word of your output in English. " +
+      "This includes all JSON string values, lists, labels, and notes. " +
+      "Do NOT use Romanian, French, German, or any other language. English only, no exceptions. " +
+      "Even if the user wrote in Romanian or another language, your output must be in English. " +
+      "\n\nYou are CrossBorder AI Guide. You now have all the information you need. " +
+      "You MUST call your tools before generating the final answer. Do not answer from memory alone. " +
+      "Required tools: get_country_requirements AND get_institution_contacts (minimum). " +
+      "Also call check_document_recognition when document cross-border recognition is relevant. " +
+      "After all relevant tools have returned results, synthesize the final JSON report. " +
+      "All JSON string values must be written in English. No URLs. No markdown. No backticks. Return ONLY valid JSON. " +
+      'Format: {"scenario_type":"","required_documents":[],"institutions":[],"complexity_level":"Low|Medium|High","next_steps":[],"process_flow":[]}'
+    );
+  }
+
+  /* ════════════════════════════════
+     SUBMIT ROUTER
+  ════════════════════════════════ */
+
+  function handleSubmit() {
+    if (isBusy) return;
+    if (!checkApiKey()) return;
+    if (agentStep === 1) runStep1();
+    else if (agentStep === 2) runStep2();
+  }
+
+  /* ── Step 1: review case ── */
+  async function runStep1() {
+    const userText = userInputEl.value.trim();
+    if (!userText) {
+      setStatus("Please describe your case before submitting.", "error");
+      userInputEl.focus();
+      return;
     }
 
-    function renderFlow(flowItems) {
-      if (!Array.isArray(flowItems) || flowItems.length === 0) {
-        return `<div class="empty-state">No process flow returned.</div>`;
-      }
+    savedOriginalCase = userText;
+    setBusy(true);
+    toolCallsLog.innerHTML = "";
+    thinkingLog.classList.add("visible");
+    rawJsonBox.textContent = "";
+    rawJsonBox.classList.remove("active");
+    resultsArea.innerHTML = buildWorkingEmptyState();
 
-      return `
-        <div class="flow-wrap">
-          ${flowItems.map((item, index) => `
-            <div class="flow-step">${escapeHtml(item)}</div>
-            ${index < flowItems.length - 1 ? `<div class="flow-arrow">→</div>` : ""}
-          `).join("")}
-        </div>
-      `;
+    setAgentState("reviewing");
+    setStatus("Reviewing your case…", "loading", true);
+    logPhaseDivider("Step 1 — Reviewing case");
+
+    /* Prepend explicit English instruction before the case text */
+    let userPrompt = "[IMPORTANT: Respond in English only. Do not use Romanian or any other language.]\n\nCross-border case:\n\n" + userText + "\n\nReminder: your entire response must be in English.";
+    if (filePayload) {
+      userPrompt +=
+        "\n\n[Attached file — metadata context only, contents not available: " +
+        filePayload.name + " (" + filePayload.type + ", " +
+        Math.round(filePayload.size / 1024) + " KB)]";
     }
 
-    function toggleJson() {
-      rawJsonBox.classList.toggle("active");
+    conversationHistory = [{ role: "user", parts: [{ text: userPrompt }] }];
+
+    try {
+      await runAgentLoop(buildReviewPrompt(), "step1");
+    } catch (err) {
+      handleAgentError(err);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /* ── Step 2: submit clarification answers, run tools ── */
+  async function runStep2() {
+    const answers = clarifyAnswerInput.value.trim();
+    if (!answers) {
+      setStatus("Please answer the questions before submitting.", "error");
+      clarifyAnswerInput.focus();
+      return;
     }
 
-    async function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+    setBusy(true);
+    setAgentState("tools");
+    setStatus("Calling tools and building your plan…", "loading", true);
+    logPhaseDivider("Step 2 — Tool calls & synthesis");
+
+    conversationHistory.push({
+      role: "user",
+      parts: [{
+        /* Reinforce English-only output before answers */
+        text:
+          "[IMPORTANT: Respond in English only. Do not use Romanian or any other language.]\n\n" +
+          "Answers to clarification questions:\n\n" + answers +
+          "\n\nNow call your tools and generate the final action plan. Your entire response must be in English only."
+      }]
+    });
+
+    try {
+      await runAgentLoop(buildToolPhasePrompt(), "step2");
+    } catch (err) {
+      handleAgentError(err);
+    } finally {
+      setBusy(false);
     }
+  }
 
-    async function analyzeProcedure() {
-      const text = userInput.value.trim();
-      const file = documentFile.files[0];
+  /* ════════════════════════════════
+     CORE AGENT LOOP
+     Sends to Gemini, handles functionCall parts, returns results,
+     repeats until final text response or max turns reached.
+     Retry logic: if text arrives without any tool calls in step2,
+     send one strict reminder and retry once before accepting.
+  ════════════════════════════════ */
 
-      if (!text) {
-        setStatus("Please describe the case before analyzing.", "error");
-        return;
-      }
+  async function runAgentLoop(systemInstruction, phase) {
+    let turns            = 0;
+    let toolCallCount    = 0;
+    let retriedToolsOnce = false;
 
-      analyzeBtn.disabled = true;
-      setStatus("Analyzing scenario...", "loading");
+    while (turns < MAX_TURNS) {
+      turns++;
 
-      try {
-        // FRONTEND DEMO PAYLOAD
-        // Replace this part later with your real backend/API call.
+      const response  = await callGeminiWithTools(conversationHistory, systemInstruction);
+      const candidate = response?.candidates?.[0];
 
-        let filePayload = null;
+      if (!candidate) throw new Error("Gemini returned no candidate. Check your API key and quota.");
 
-        if (file) {
-          filePayload = {
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            contentBase64: await fileToBase64(file) // ready for backend later
-          };
+      const parts         = candidate.content?.parts || [];
+      const functionCalls = parts.filter(p => p.functionCall);
+      const textParts     = parts.filter(p => p.text);
+
+      conversationHistory.push({ role: "model", parts });
+
+      /* ── Tool calls ── */
+      if (functionCalls.length > 0) {
+        if (toolCallCount === 0) setAgentState("tools");
+
+        const toolResultParts = [];
+        for (const part of functionCalls) {
+          const { name, args } = part.functionCall;
+          const logId = addToolCallLog(name, args);
+          let result;
+          try {
+            result = executeTool(name, args);
+            updateToolCallLog(logId, "done", result);
+            toolCallCount++;
+          } catch (e) {
+            result = { error: "Tool execution failed: " + e.message };
+            updateToolCallLog(logId, "error");
+          }
+          toolResultParts.push({
+            functionResponse: {
+              name,
+              response: { content: JSON.stringify(result) }
+            }
+          });
         }
 
-        // DEMO RESPONSE FOR UI TESTING
-        // Replace this entire section with fetch("/analyze", {...}) later.
-        const demoResponse = await getDemoAgentResponse(text, filePayload);
-
-        renderResults(demoResponse);
-        setStatus("Action plan generated.", "success");
-      } catch (error) {
-        console.error(error);
-        setStatus("Something went wrong. Please try again.", "error");
-      } finally {
-        analyzeBtn.disabled = false;
+        conversationHistory.push({ role: "user", parts: toolResultParts });
+        setStatus(
+          toolCallCount + " tool" + (toolCallCount !== 1 ? "s" : "") + " called — synthesizing…",
+          "loading", true
+        );
+        setAgentState("synthesizing");
+        continue;
       }
+
+      /* ── Text response ── */
+      if (textParts.length > 0) {
+        const rawText = textParts.map(p => p.text).join("").trim();
+        rawJsonBox.textContent = rawText || "[empty response]";
+
+        const parsed = parseJsonSafely(rawText);
+
+        /* Clarification questions */
+        if (parsed.clarification_needed === true && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
+          setAgentState("clarifying");
+          showClarificationUI(parsed.questions);
+          return;
+        }
+
+        /* Final report shape */
+        if (parsed.scenario_type !== undefined || parsed.required_documents !== undefined) {
+          /* Retry if no tools were called in step2 */
+          if (toolCallCount === 0 && !retriedToolsOnce && phase === "step2") {
+            retriedToolsOnce = true;
+            conversationHistory.push({
+              role: "user",
+              parts: [{
+                text:
+                  "You have not called any tools yet. " +
+                  "You MUST call get_country_requirements and get_institution_contacts before giving the final answer. " +
+                  "Please call those tools now."
+              }]
+            });
+            setStatus("Retrying — waiting for tool calls…", "loading", true);
+            setAgentState("tools");
+            continue;
+          }
+
+          setAgentState("done");
+          renderReport(parsed, toolCallCount);
+          setStatus(
+            "✓ Action plan ready" +
+            (toolCallCount > 0
+              ? " · " + toolCallCount + " tool" + (toolCallCount !== 1 ? "s" : "") + " used"
+              : "") + ".",
+            "success"
+          );
+          resetBtnEl.style.display = "";
+          return;
+        }
+
+        /* Unexpected shape */
+        rawJsonBox.classList.add("active");
+        setStatus("Unexpected response format. See raw JSON.", "error");
+        resultsArea.innerHTML = buildErrorEmptyState("The agent returned an unexpected format. See raw JSON above the results.");
+        resetBtnEl.style.display = "";
+        return;
+      }
+
+      /* Empty stop */
+      if (candidate.finishReason === "STOP") {
+        throw new Error("Agent stopped without producing output. Try rephrasing your case.");
+      }
+      break;
     }
 
-    async function getDemoAgentResponse(text, filePayload) {
-      // Fake delay to simulate agent behavior
-      await new Promise(resolve => setTimeout(resolve, 1200));
+    if (turns >= MAX_TURNS) {
+      setStatus("Agent reached maximum turns. Try simplifying your query.", "error");
+      resetBtnEl.style.display = "";
+    }
+  }
 
-      const lower = text.toLowerCase();
+  /* ════════════════════════════════
+     CLARIFICATION UI
+  ════════════════════════════════ */
 
-      if (lower.includes("married") || lower.includes("marriage")) {
-        return {
-          scenario_type: filePayload
-            ? "Administrative procedure: Marriage transcription with supporting document"
-            : "Administrative procedure: Marriage transcription",
-          required_documents: [
-            "International marriage certificate or equivalent accepted version",
-            "Romanian birth certificate",
-            "Valid IDs or passports for both spouses",
-            "Any required translated supporting civil-status document"
-          ],
-          institutions: [
-            "Standesamt in Germany",
-            "Romanian Consulate or local Romanian civil registry office",
-            "econsulat.ro / Ministry of Foreign Affairs"
-          ],
-          complexity_level: "Medium",
-          next_steps: [
-            "Confirm which marriage certificate format is accepted by the Romanian institution",
-            "Prepare civil-status and identity documents",
-            "Upload or present documents for pre-validation",
-            "Schedule appointment and submit originals"
-          ],
-          process_flow: [
-            "German Civil Registry",
-            "Marriage Certificate",
-            "Romanian Consulate",
-            "Civil Registry Romania"
-          ]
-        };
-      }
+  function showClarificationUI(questions) {
+    agentStep = 2;
+    clarifyList.innerHTML = questions.map(q => "<li>" + escHtml(q) + "</li>").join("");
+    clarifyBlock.classList.add("visible");
+    analyzeBtnEl.textContent = "▶ Submit Answers";
+    userInputEl.disabled = true;
+    panelSub.textContent = "The agent needs a couple more details. Answer the questions below, then click Submit Answers.";
+    resetBtnEl.style.display = "";
+    resultsArea.innerHTML = buildClarifyEmptyState();
+    setStatus("Please answer the questions above.", "loading");
+    clarifyAnswerInput.focus();
+  }
 
+  /* ════════════════════════════════
+     GEMINI API CALL
+  ════════════════════════════════ */
+
+  async function callGeminiWithTools(contents, systemInstruction) {
+    const url = GEMINI_API_BASE + GEMINI_MODEL + ":generateContent?key=" + GEMINI_API_KEY;
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemInstruction }] },
+        contents,
+        tools: [{ function_declarations: TOOL_DECLARATIONS }],
+        tool_config: { function_calling_config: { mode: "AUTO" } },
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 2000
+        }
+      })
+    });
+
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_) {
+      throw new Error("Gemini API returned a non-JSON response.");
+    }
+
+    if (!res.ok) {
+      const msg = data?.error?.message || "Gemini API error";
+      const code = data?.error?.code ? " (" + data.error.code + ")" : "";
+      throw new Error(msg + code);
+    }
+
+    return data;
+  }
+
+  /* ════════════════════════════════
+     TOOL CALL LOG
+  ════════════════════════════════ */
+
+  let logCounter = 0;
+  const TOOL_ICONS = {
+    get_country_requirements:   "📋",
+    get_institution_contacts:   "🏛️",
+    check_document_recognition: "🔍"
+  };
+
+  function logPhaseDivider(label) {
+    const el = document.createElement("div");
+    el.className = "log-phase-divider";
+    el.textContent = label;
+    toolCallsLog.appendChild(el);
+  }
+
+  function addToolCallLog(toolName, args) {
+    const id     = "tc-" + (++logCounter);
+    const icon   = TOOL_ICONS[toolName] || "🔧";
+    const argStr = Object.entries(args || {}).map(([k, v]) => k + ": " + v).join(" · ");
+
+    const el = document.createElement("div");
+    el.className = "tool-call";
+    el.id = id;
+    el.innerHTML =
+      '<span class="tool-icon">' + icon + "</span>" +
+      "<div>" +
+        '<div class="tool-name" id="' + id + '-name">' + escHtml(toolName) + "</div>" +
+        '<div class="tool-args">' + escHtml(argStr) + "</div>" +
+        '<div class="tool-result-preview" id="' + id + '-res"></div>' +
+      "</div>";
+    toolCallsLog.appendChild(el);
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    return id;
+  }
+
+  function updateToolCallLog(id, status, result) {
+    const el     = document.getElementById(id);
+    const nameEl = document.getElementById(id + "-name");
+    const resEl  = document.getElementById(id + "-res");
+    if (!el) return;
+    el.classList.add(status);
+    if (nameEl) nameEl.className = "tool-name " + status;
+    if (resEl && result && status === "done") {
+      const preview = result.required_documents
+        ? result.required_documents.length + " documents"
+        : result.institutions
+          ? result.institutions.length + " institutions"
+          : result.process_required || "data retrieved";
+      resEl.textContent = "→ " + preview;
+    }
+  }
+
+  /* ════════════════════════════════
+     REPORT RENDERING
+  ════════════════════════════════ */
+
+  function renderReport(data, toolCount) {
+    const complexity = String(data.complexity_level || "").toLowerCase();
+    const badgeClass = complexity === "low" ? "low" : complexity === "medium" ? "medium" : "high";
+    const scenario   = data.scenario_type || "Cross-border procedure";
+
+    const summaryNote =
+      toolCount > 0
+        ? "Generated using " + toolCount + " tool call" + (toolCount !== 1 ? "s" : "") + " · Local structured tools · Hackathon demo"
+        : "Generated · Local structured tools · Hackathon demo";
+
+    resultsArea.innerHTML =
+      '<div class="result-summary">' +
+        '<div>' +
+          '<div class="result-summary-title">' + escHtml(scenario) + '</div>' +
+          '<div class="result-summary-sub">' + escHtml(summaryNote) + '</div>' +
+        '</div>' +
+        '<span class="badge ' + escHtml(badgeClass) + '">' + escHtml(data.complexity_level || "Unknown") + '</span>' +
+      '</div>' +
+
+      '<div class="result-card">' +
+        '<h3>Required documents</h3>' +
+        renderList(data.required_documents) +
+      '</div>' +
+
+      '<div class="result-card">' +
+        '<h3>Relevant institutions</h3>' +
+        renderList(data.institutions) +
+      '</div>' +
+
+      '<div class="result-card">' +
+        '<h3>Next steps</h3>' +
+        renderList(data.next_steps) +
+      '</div>' +
+
+      (Array.isArray(data.process_flow) && data.process_flow.length > 0
+        ? '<div class="result-card"><h3>Process flow</h3>' + renderFlow(data.process_flow) + '</div>'
+        : "");
+  }
+
+  function renderList(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      return '<p style="color:var(--muted);font-size:13px;margin:0">No items returned for this section.</p>';
+    }
+    return "<ul>" + items.map(i => "<li>" + escHtml(String(i)) + "</li>").join("") + "</ul>";
+  }
+
+  function renderFlow(items) {
+    return '<div class="flow-wrap">' +
+      items.map((item, i) =>
+        '<div class="flow-step">' + escHtml(String(item)) + "</div>" +
+        (i < items.length - 1 ? '<span class="flow-arrow">→</span>' : "")
+      ).join("") +
+    "</div>";
+  }
+
+  function buildWorkingEmptyState() {
+    return '<div class="empty-state"><div class="empty-state-icon">⚙️</div>Agent is working…</div>';
+  }
+  function buildClarifyEmptyState() {
+    return '<div class="empty-state"><div class="empty-state-icon">💬</div>Answer the questions on the left, then click <strong>Submit Answers</strong>.</div>';
+  }
+  function buildErrorEmptyState(msg) {
+    return '<div class="empty-state" style="color:var(--danger)">' + escHtml(msg) + '</div>';
+  }
+
+  /* ════════════════════════════════
+     DEFENSIVE JSON PARSER
+     4 tiers: direct → strip fences → bracket scan → fallback
+  ════════════════════════════════ */
+
+  function parseJsonSafely(raw) {
+    const t = String(raw || "").trim();
+
+    if (!t) {
       return {
-        scenario_type: filePayload
-          ? "Business market-entry scenario with attached product document"
-          : "Business market-entry scenario",
-        required_documents: [
-          "Product material composition details",
-          "Importer or authorized representative information",
-          "Compliance declarations",
-          "Testing or safety documentation"
-        ],
-        institutions: [
-          "EU importer or authorized representative",
-          "Customs authority",
-          "Relevant product compliance authority"
-        ],
-        complexity_level: "High",
-        next_steps: [
-          "Define the exact target market and importer setup",
-          "Check product-specific compliance requirements",
-          "Prepare required technical and import documents",
-          "Validate labeling and market-entry obligations"
-        ],
-        process_flow: [
-          "Product Data",
-          "Compliance Review",
-          "Importer Setup",
-          "Customs Check",
-          "Market Entry"
-        ]
+        scenario_type: "Empty response",
+        required_documents: [],
+        institutions: [],
+        complexity_level: "Unknown",
+        next_steps: ["The model returned an empty response."],
+        process_flow: []
       };
     }
-  </script>
+
+    try {
+      return JSON.parse(t);
+    } catch (_) {}
+
+    const stripped = t
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+
+    try {
+      return JSON.parse(stripped);
+    } catch (_) {}
+
+    const first = stripped.indexOf("{");
+    const last = stripped.lastIndexOf("}");
+    if (first !== -1 && last > first) {
+      const candidate = stripped.slice(first, last + 1);
+      try {
+        return JSON.parse(candidate);
+      } catch (_) {}
+    }
+
+    console.warn("parseJsonSafely: could not parse response:", raw);
+    return {
+      scenario_type: "Parse error",
+      required_documents: [],
+      institutions: [],
+      complexity_level: "Unknown",
+      next_steps: [
+        "The agent response could not be parsed as valid JSON.",
+        "First 300 chars: " + stripped.slice(0, 300)
+      ],
+      process_flow: []
+    };
+  }
+
+  /* ════════════════════════════════
+     UTILITIES
+  ════════════════════════════════ */
+
+  function setStatus(msg, type, spinning) {
+    statusBox.className = "status " + (type || "");
+    if (spinning) {
+      statusBox.innerHTML =
+        '<span class="spinner" aria-hidden="true"></span><span>' + escHtml(msg) + "</span>";
+    } else {
+      statusBox.textContent = msg;
+    }
+  }
+
+  function setBusy(busy) {
+    isBusy = busy;
+    analyzeBtnEl.disabled = busy;
+    document.querySelectorAll(".example-chip").forEach(b => (b.disabled = busy));
+    document.body.style.cursor = busy ? "progress" : "";
+  }
+
+  function escHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function toggleJson() { rawJsonBox.classList.toggle("active"); }
+
+  function handleAgentError(err) {
+    console.error("Agent error:", err);
+    hideAgentState();
+    setStatus("Error: " + (err.message || "Unknown error — check the browser console."), "error");
+    resultsArea.innerHTML = buildErrorEmptyState(
+      "The agent encountered an error. Please check your API key, then try again or start over."
+    );
+    resetBtnEl.style.display = "";
+  }
+
+  function resetAll() {
+    agentStep           = 1;
+    savedOriginalCase   = "";
+    conversationHistory = [];
+    filePayload         = null;
+
+    userInputEl.value        = "";
+    userInputEl.disabled     = false;
+    clarifyAnswerInput.value = "";
+    clarifyList.innerHTML    = "";
+    clarifyBlock.classList.remove("visible");
+
+    analyzeBtnEl.textContent = "▶ Analyze Case";
+    panelSub.textContent =
+      "The agent reviews your case, may ask up to 2 clarifying questions if critical details are missing, then calls its tools to build a complete action plan.";
+
+    resetBtnEl.style.display = "none";
+    toolCallsLog.innerHTML   = "";
+    thinkingLog.classList.remove("visible");
+    rawJsonBox.textContent   = "";
+    rawJsonBox.classList.remove("active");
+    resultsArea.innerHTML    =
+      '<div class="empty-state"><div class="empty-state-icon">🗺️</div>Submit a case on the left to generate a structured action plan.</div>';
+
+    hideAgentState();
+    setStatus("", "");
+    clearFilePreview();
+    checkApiKey();
+    userInputEl.focus();
+  }
+
+  function setExample(n) {
+    if (isBusy) return;
+    const ex = {
+      1: "I got married in Germany and need to register the marriage in Romania. I am a Romanian citizen, my spouse is German. We have the German marriage certificate (Heiratsurkunde).",
+      2: "A company from India wants to sell aluminum kitchen products in Germany. We need to understand import requirements, CE marking compliance, and which German institutions to contact.",
+      3: "I have a Romanian university diploma (engineering) and want it recognized in France so I can work as an engineer. What documents and institutions are involved?"
+    };
+    userInputEl.value = ex[n] || "";
+    userInputEl.focus();
+  }
+
+  /* ── File upload ── */
+  documentFileEl.addEventListener("change", function () {
+    const file = documentFileEl.files[0];
+    if (!file) { filePayload = null; clearFilePreview(); return; }
+
+    filePayload = { name: file.name, type: file.type || "unknown", size: file.size };
+
+    filePreviewEl.classList.add("active");
+    filePreviewEl.innerHTML =
+      "<strong>" + escHtml(file.name) + "</strong>" +
+      " &nbsp;|&nbsp; " + escHtml(file.type || "unknown") +
+      " &nbsp;|&nbsp; " + Math.round(file.size / 1024) + " KB" +
+      '<br><span style="font-size:12px;color:var(--muted)">' +
+      "⚠ File contents are not read or uploaded. Only filename and file type are passed to the agent." +
+      "</span>";
+
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        filePreviewEl.innerHTML += '<img src="' + e.target.result + '" alt="Document preview" />';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  function clearFile() {
+    documentFileEl.value = "";
+    filePayload = null;
+    clearFilePreview();
+  }
+
+  function clearFilePreview() {
+    filePreviewEl.classList.remove("active");
+    filePreviewEl.innerHTML = "";
+  }
+
+  /* ── Init ── */
+  checkApiKey();
+
+</script>
 </body>
 </html>
