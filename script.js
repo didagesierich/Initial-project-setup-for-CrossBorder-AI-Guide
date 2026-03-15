@@ -107,6 +107,8 @@ function buildReviewPrompt() {
   return (
     "ABSOLUTE RULE — OUTPUT LANGUAGE: Every word of your output MUST be in English. " +
     "Do not use any other language regardless of the user's input language. " +
+    "Do not use markdown, bold text, bullet points, or code fences. " +
+"Return plain text only inside JSON strings. " +
     "\n\nYou are a Market Entry Risk Assessment Agent. " +
     "Your job is to analyze a product's regulatory and market entry risks when entering a target market from a country of origin. " +
     "\n\nPHASE: Review. Decide if you have enough information to generate the risk report." +
@@ -121,6 +123,8 @@ function buildGenerationPrompt() {
   return (
     "ABSOLUTE RULE — OUTPUT LANGUAGE: Every word of your output MUST be in English. " +
     "Do not use any other language regardless of the user's input language. " +
+    "Do not use markdown, bold text, bullet points, or code fences. " +
+"Return plain text only inside JSON strings. " +
     "\n\nYou are a Market Entry Risk Assessment Agent. " +
     'Return ONLY valid JSON in this format: {"scenario_type":"","complexity_level":"Low|Medium|High","regulatory_risks":[],"next_steps":[],"summary":""}'
   );
